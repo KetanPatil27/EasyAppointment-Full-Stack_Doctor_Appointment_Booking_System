@@ -23,31 +23,33 @@ export class ResetPasswordService {
       .update(token)
       .digest('hex')
 
+    // ── Find token and verify it is active ──
     const found = await passwordResets.find({
-      query: { token: hashedToken }
+      query: { token: hashedToken, status: 'active' }
     })
 
     if (!found.data || !found.data.length) {
-      throw new Error('Invalid or expired token')
+      throw new Error('Invalid or expired reset token. Please request a new one.')
     }
 
     const reset = found.data[0]
 
-    // Check expiry
+    // ── Check expiry ──
     if (new Date(reset.expiresAt) < new Date()) {
-      await passwordResets.remove(reset._id, { provider: undefined })
-      throw new Error('Token has expired')
+      // Mark expired for audit trail (TTL will clean up the record)
+      await passwordResets.patch(reset._id, { status: 'expired' }, { provider: undefined })
+      throw new Error('This reset link has expired. Please request a new one.')
     }
 
-    // Update password (hook will hash it)
+    // ── Update password (the users hook will hash it) ──
     await users.patch(
       reset.userId,
       { password },
       { provider: undefined }
     )
 
-    // Clean up used token
-    await passwordResets.remove(reset._id, { provider: undefined })
+    // ── Mark token as used (audit trail — TTL auto-deletes later) ──
+    await passwordResets.patch(reset._id, { status: 'used' }, { provider: undefined })
 
     return { message: 'Password updated successfully' }
   }

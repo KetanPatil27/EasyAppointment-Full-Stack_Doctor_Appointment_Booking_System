@@ -23,14 +23,32 @@ export class ForgotPasswordService {
     }
 
     const user = found.data[0]
+    const userId = user._id.toString()
 
+    // ── Invalidate all previous tokens for this user ──
+    try {
+      const existing = await passwordResets.find({
+        query: { userId, status: 'active' },
+        paginate: false
+      } as any)
+      const tokens = Array.isArray(existing) ? existing : existing.data || []
+      for (const tok of tokens) {
+        await passwordResets.patch(tok._id, { status: 'expired' }, { provider: undefined })
+      }
+    } catch {
+      // Silently continue — old tokens will expire via TTL anyway
+    }
+
+    // ── Generate new token ──
     const rawToken = crypto.randomBytes(32).toString('hex')
     const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex')
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 15) // 15 min
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 15) // 15 minutes
 
     await passwordResets.create({
-      userId: user._id.toString(),
+      userId,
+      email,
       token: hashedToken,
+      status: 'active',
       expiresAt,
       createdAt: new Date().toISOString()
     }, { provider: undefined } as any)

@@ -8,7 +8,8 @@ const getTransporter = () => {
 }
 
 export const sendResetEmail = async (email: string, token: string) => {
-  const resetLink = `http://localhost:3000/reset-password?token=${token}`
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
+  const resetLink = `${frontendUrl}/reset-password?token=${token}`
   const transporter = getTransporter()
 
   if (!transporter) {
@@ -20,15 +21,28 @@ export const sendResetEmail = async (email: string, token: string) => {
   await transporter.sendMail({
     from: process.env.MAIL_USER,
     to: email,
-    subject: 'EasyAppointment – Password Reset',
+    subject: 'EasyAppointment – Password Reset Request',
     html: `
-      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="color:#2563eb">Password Reset Request</h2>
-        <p>You requested a password reset for your EasyAppointment account.</p>
-        <a href="${resetLink}" style="display:inline-block;background:#2563eb;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;margin:16px 0">Reset Password</a>
-        <p style="color:#666;font-size:14px">This link expires in 15 minutes. If you didn't request this, ignore this email.</p>
-        <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0"/>
-        <p style="color:#9ca3af;font-size:12px">© 2025 EasyAppointment. All rights reserved.</p>
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #e5e7eb;border-radius:8px">
+        <div style="background:#2563eb;color:white;padding:20px;border-radius:8px 8px 0 0;text-align:center">
+          <h1 style="margin:0;font-size:24px">EasyAppointment</h1>
+          <p style="margin:8px 0 0;opacity:0.9">Password Reset Request</p>
+        </div>
+        <div style="padding:24px">
+          <p style="font-size:16px">Hello,</p>
+          <p>We received a request to reset the password for your EasyAppointment account associated with <strong>${email}</strong>.</p>
+          <p>Click the button below to set a new password. This link is valid for <strong>15 minutes</strong>.</p>
+          <div style="text-align:center;margin:24px 0">
+            <a href="${resetLink}" style="display:inline-block;background:#2563eb;color:white;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px">Reset My Password</a>
+          </div>
+          <p style="color:#6b7280;font-size:14px">If the button above doesn't work, copy and paste this link into your browser:</p>
+          <p style="color:#2563eb;font-size:13px;word-break:break-all">${resetLink}</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+          <p style="color:#6b7280;font-size:13px">If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+        </div>
+        <div style="padding:16px 24px;background:#f9fafb;border-radius:0 0 8px 8px;border-top:1px solid #e5e7eb;text-align:center">
+          <p style="color:#9ca3af;font-size:12px;margin:0">© 2026 EasyAppointment. All rights reserved.</p>
+        </div>
       </div>
     `
   })
@@ -52,13 +66,13 @@ interface AppointmentEmailData {
 
 export const sendAppointmentConfirmation = async (data: AppointmentEmailData) => {
   const transporter = getTransporter()
-  const { 
-    emailType, patientEmail, patientName, doctorName, date, startTime, endTime, 
-    consultationFee, appointmentId, clinicName, city, locality, pincode 
+  const {
+    emailType, patientEmail, patientName, doctorName, date, startTime, endTime,
+    consultationFee, appointmentId, clinicName, city, locality, pincode
   } = data
 
   const title = emailType === 'booked' ? 'Appointment Booked' : 'Appointment Confirmed ✓'
-  const message = emailType === 'booked' 
+  const message = emailType === 'booked'
     ? 'Your appointment has been successfully booked and is waiting for doctor confirmation.'
     : 'Your appointment has been confirmed by the doctor. Here are the details:'
 
@@ -103,7 +117,7 @@ export const sendAppointmentConfirmation = async (data: AppointmentEmailData) =>
           </div>
         </div>
         <div style="padding:16px 24px;background:#f9fafb;border-radius:0 0 8px 8px;border-top:1px solid #e5e7eb;text-align:center">
-          <p style="color:#9ca3af;font-size:12px;margin:0">© 2025 EasyAppointment. All rights reserved.</p>
+          <p style="color:#9ca3af;font-size:12px;margin:0">© 2026 EasyAppointment. All rights reserved.</p>
         </div>
       </div>
     `
