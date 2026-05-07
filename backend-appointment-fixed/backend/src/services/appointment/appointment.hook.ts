@@ -1,5 +1,6 @@
 import { hooks as authHooks } from '@feathersjs/authentication'
-import { Forbidden, BadRequest } from '@feathersjs/errors'
+import { Forbidden, BadRequest, Conflict } from '@feathersjs/errors'
+import { ObjectId } from 'mongodb'
 import { sendAppointmentConfirmation } from '../../utils/mailer'
 
 const { authenticate } = authHooks
@@ -35,7 +36,6 @@ const restrictAppointmentPatch = async (context: any) => {
       throw new Forbidden('You can modify only your own appointment')
     }
 
-    const allowedStatuses = ['cancelled']
     // Allow reschedule: patient can patch slotId (with new slot)
     const isReschedule = context.data.slotId && context.data.slotId !== appointment.slotId
     const isCancel = context.data.status === 'cancelled'
@@ -55,7 +55,7 @@ const restrictAppointmentPatch = async (context: any) => {
     }
     const allowedFields = ['status', 'consultationFee', 'notes']
     const patchKeys = Object.keys(context.data)
-    const invalidKeys = patchKeys.filter(k => !allowedFields.includes(k))
+    const invalidKeys = patchKeys.filter((k) => !allowedFields.includes(k))
     if (invalidKeys.length > 0) {
       throw new BadRequest(`Invalid fields: ${invalidKeys.join(', ')}`)
     }
@@ -69,59 +69,120 @@ const restrictAppointmentPatch = async (context: any) => {
   return context
 }
 
+/**
+ * Helper: convert a string id to a MongoDB ObjectId, returning the original
+ * value if it isn't a valid 24-char hex string. Defensive — if the slot id
+ * is malformed the findOneAndUpdate filter simply won't match and we throw
+ * a clean Conflict error.
+ */
+const toObjectId = (id: string): any => {
+  return ObjectId.isValid(id) ? new ObjectId(id) : id
+}
+
+/**
+ * Atomically reserve a slot. Replaces the previous read-then-write code that
+ * allowed two concurrent bookings to both read `isBooked: false`, both pass
+ * the check, and both succeed in patching the slot — leading to a double
+ * booking on the same time slot.
+ *
+ * `findOneAndUpdate` runs as a single MongoDB operation: only the first caller
+ * whose filter matches `isBooked: false` gets the document back; every later
+ * caller gets `null` and is rejected with a 409 Conflict.
+ */
 const bookSlot = async (context: any) => {
   const { app, data, params } = context
-  const slotService = app.service('slots')
-
-  const slot = await slotService.get(data.slotId)
-  if (slot.isBooked) {
-    throw new BadRequest('Slot is already booked')
+  if (!data?.slotId) {
+    throw new BadRequest('slotId is required')
   }
 
-  await slotService.patch(data.slotId, { isBooked: true }, { provider: undefined })
+  const slotService = app.service('slots')
+  const slotsCollection = await slotService.options.Model
+  const _id = toObjectId(data.slotId)
+
+  const claimed = await slotsCollection.findOneAndUpdate(
+    { _id, isBooked: false },
+    { $set: { isBooked: true } },
+    { returnDocument: 'after' }
+  )
+
+  if (!claimed) {
+    // Filter didn't match: either the slot doesn't exist, or another request
+    // already flipped isBooked to true between this user opening the page
+    // and clicking "Book". Either way it's a 409, not a 500.
+    throw new Conflict('This slot is no longer available. Please choose another.')
+  }
 
   context.data = {
     slotId: data.slotId,
-    doctorId: slot.doctorId.toString(),
+    doctorId: claimed.doctorId.toString(),
     patientId: params.user._id.toString(),
     status: 'booked',
     notes: data.notes || '',
-    date: slot.date,
-    startTime: slot.startTime,
-    endTime: slot.endTime,
+    date: claimed.date,
+    startTime: claimed.startTime,
+    endTime: claimed.endTime,
     createdAt: new Date().toISOString()
   }
   return context
 }
 
-// Reschedule: release old slot, book new slot, update appointment date/time
+/**
+ * Atomic reschedule:
+ *   1. Atomically claim the new slot (only succeeds if isBooked: false).
+ *   2. If claimed, best-effort release the old slot.
+ *
+ * Note: full multi-collection atomicity (release-old + claim-new + patch-
+ * appointment in one transaction) is Phase 2 per the review. For now we at
+ * least eliminate the double-claim race on the new slot, which is the only
+ * step that can corrupt data; the worst case if step 2 fails is one stale
+ * "isBooked: true" slot that never gets released — operationally annoying
+ * but not a data integrity violation.
+ */
 const handleReschedule = async (context: any) => {
   const { app, data } = context
   if (!data.slotId) return context
 
   const slotService = app.service('slots')
   const appointment = await context.service.get(context.id)
+  const slotsCollection = await slotService.options.Model
+  const newSlotId = toObjectId(data.slotId)
 
-  const newSlot = await slotService.get(data.slotId)
-  if (newSlot.isBooked) {
-    throw new BadRequest('This slot is already booked. Please select another.')
+  const claimed = await slotsCollection.findOneAndUpdate(
+    { _id: newSlotId, isBooked: false },
+    { $set: { isBooked: true } },
+    { returnDocument: 'after' }
+  )
+
+  if (!claimed) {
+    throw new Conflict('This slot is no longer available. Please choose another.')
   }
 
-  // Release old slot
+  // Release old slot. Failures here are logged but do not roll back the new
+  // claim — the patient already has the new slot and rolling back would race
+  // with another patient who may have just claimed it. Phase 2 will wrap this
+  // sequence in a MongoDB transaction.
   if (appointment.slotId) {
-    await slotService.patch(appointment.slotId, { isBooked: false }, { provider: undefined })
+    try {
+      await slotService.patch(
+        appointment.slotId,
+        { isBooked: false },
+        { provider: undefined }
+      )
+    } catch (err) {
+      console.error('[Reschedule] Failed to release old slot', {
+        appointmentId: context.id,
+        oldSlotId: appointment.slotId,
+        error: (err as Error).message
+      })
+    }
   }
 
-  // Book new slot
-  await slotService.patch(data.slotId, { isBooked: true }, { provider: undefined })
-
-  // Update appointment with new slot details
   context.data = {
     slotId: data.slotId,
-    date: newSlot.date,
-    startTime: newSlot.startTime,
-    endTime: newSlot.endTime,
-    status: 'booked',  // reset to booked after reschedule
+    date: claimed.date,
+    startTime: claimed.startTime,
+    endTime: claimed.endTime,
+    status: 'booked',
     updatedAt: new Date().toISOString()
   }
   return context
@@ -130,7 +191,7 @@ const handleReschedule = async (context: any) => {
 const sendConfirmationEmail = async (context: any) => {
   try {
     const { app, result, method, data } = context
-    
+
     // Only send email on create (booked) OR on patch if status is newly confirmed
     let emailType: 'booked' | 'confirmed' = 'booked'
     if (method === 'patch') {
@@ -143,8 +204,11 @@ const sendConfirmationEmail = async (context: any) => {
 
     const [patient, doctorProfile] = await Promise.all([
       app.service('users').get(result.patientId, { provider: undefined }),
-      app.service('doctors').find({ query: { userId: result.doctorId }, provider: undefined } as any)
-        .then((r: any) => r.data?.[0] || null).catch(() => null)
+      app
+        .service('doctors')
+        .find({ query: { userId: result.doctorId }, provider: undefined } as any)
+        .then((r: any) => r.data?.[0] || null)
+        .catch(() => null)
     ])
 
     const doctorUser = doctorProfile
@@ -175,11 +239,10 @@ const sendConfirmationEmail = async (context: any) => {
 const releaseSlotIfCancelled = async (context: any) => {
   const cancelledStatuses = ['cancelled', 'cancelled_by_patient', 'cancelled_by_doctor']
   if (context.result && cancelledStatuses.includes(context.result.status)) {
-    await context.app.service('slots').patch(
-      context.result.slotId,
-      { isBooked: false },
-      { provider: undefined }
-    ).catch(() => {})
+    await context.app
+      .service('slots')
+      .patch(context.result.slotId, { isBooked: false }, { provider: undefined })
+      .catch(() => {})
   }
   return context
 }

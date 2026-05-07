@@ -3,6 +3,7 @@ import { LocalStrategy } from '@feathersjs/authentication-local'
 import { Forbidden } from '@feathersjs/errors'
 import type { Application } from './declarations'
 import { InactiveAccountError } from './errors/InactiveAccountError'
+import { AUTH_COOKIE_NAME } from './middleware/auth-cookie'
 
 declare module './declarations' {
   interface ServiceTypes {
@@ -29,6 +30,24 @@ class CustomLocalStrategy extends LocalStrategy {
 }
 
 class CustomJWTStrategy extends JWTStrategy {
+  /**
+   * Extracts the JWT from either:
+   *   1. The standard `Authorization: Bearer <token>` header (default behaviour)
+   *   2. An httpOnly cookie named `accessToken` (added for cookie-based auth)
+   * Cookie is preferred because it cannot be read by client-side JS (XSS-proof).
+   */
+  async parse(req: any) {
+    const fromHeader = await super.parse(req)
+    if (fromHeader) return fromHeader
+
+    const token = req?.cookies?.[AUTH_COOKIE_NAME]
+    if (token) {
+      return { strategy: this.name, accessToken: token }
+    }
+
+    return null
+  }
+
   async getEntity(id: string, params: any) {
     const user = await super.getEntity(id, params)
 

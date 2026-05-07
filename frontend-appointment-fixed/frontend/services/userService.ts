@@ -37,6 +37,18 @@ export const loginUser = async (email: string, password: string, role?: string):
   return response.data
 }
 
+/**
+ * Logs the user out by asking the backend to clear the httpOnly cookie.
+ * Best-effort: we always clear local UI state even if the network call fails.
+ */
+export const logoutUser = async () => {
+  try {
+    await api.delete('/authentication')
+  } catch {
+    // ignore — the local logout will still happen
+  }
+}
+
 export const getCurrentUser = async () => {
   const response = await api.get('/authentication')
   return response.data

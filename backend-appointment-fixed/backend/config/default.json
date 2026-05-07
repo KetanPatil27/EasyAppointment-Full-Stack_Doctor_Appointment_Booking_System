@@ -3,7 +3,7 @@
   "port": 3030,
   "public": "./public/",
   "origins": [
-    "http://localhost:3030"
+    "http://localhost:3000"
   ],
   "paginate": {
     "default": 10,
@@ -13,7 +13,7 @@
   "authentication": {
     "entity": "user",
     "service": "users",
-    "secret": "IeHWgKmbax6WrUJUO68C0LaqxN25Wy9G",
+    "secret": "",
     "authStrategies": [
       "jwt",
       "local"

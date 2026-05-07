@@ -4,7 +4,12 @@
     "__format": "number"
   },
   "host": "HOSTNAME",
+  "mongodb": "MONGODB_URI",
+  "origins": {
+    "__name": "ALLOWED_ORIGINS",
+    "__format": "json"
+  },
   "authentication": {
-    "secret": "FEATHERS_SECRET"
+    "secret": "JWT_SECRET"
   }
 }

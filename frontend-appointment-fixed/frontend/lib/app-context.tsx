@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
-import { registerUser, loginUser } from '@/services/userService'
+import { registerUser, loginUser, logoutUser } from '@/services/userService'
 
 export interface CurrentUser {
   _id: string
@@ -27,7 +27,7 @@ interface AppContextType {
   isAuthenticated: boolean
   isAuthLoading: boolean
   login: (email: string, password: string, role?: string) => Promise<CurrentUser | null>
-  logout: () => void
+  logout: () => Promise<void>
   register: (userData: RegisterInput) => Promise<boolean>
   updateCurrentUser: (data: Partial<CurrentUser>) => void
 }
@@ -38,17 +38,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
 
-  // Restore session on load
+  // Restore session on load.
+  // Note: the JWT now lives in an httpOnly cookie that JS cannot read; we only
+  // hydrate the cached user *profile* from localStorage to avoid an unauthenticated
+  // flash. The server is the source of truth — any unauthenticated request will
+  // get a 401 and the api interceptor will clear this cache + redirect.
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem('currentUser')
-      const token = localStorage.getItem('accessToken')
-      if (storedUser && token) {
+      if (storedUser) {
         setCurrentUser(JSON.parse(storedUser))
       }
     } catch {
       localStorage.removeItem('currentUser')
-      localStorage.removeItem('accessToken')
     } finally {
       setIsAuthLoading(false)
     }
@@ -57,16 +59,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string, role?: string): Promise<CurrentUser | null> => {
     const data = await loginUser(email, password, role)
     const user = data.user as CurrentUser
-    localStorage.setItem('accessToken', data.accessToken)
+    // The accessToken is set as an httpOnly cookie by the backend — do NOT store it in localStorage.
     localStorage.setItem('currentUser', JSON.stringify(user))
     setCurrentUser(user)
     return user
   }
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    // Clear local UI state immediately for snappy logout, then ask the server
+    // to clear the httpOnly cookie in the background.
     setCurrentUser(null)
     localStorage.removeItem('currentUser')
-    localStorage.removeItem('accessToken')
+    await logoutUser()
   }, [])
 
   const register = async (userData: RegisterInput): Promise<boolean> => {
