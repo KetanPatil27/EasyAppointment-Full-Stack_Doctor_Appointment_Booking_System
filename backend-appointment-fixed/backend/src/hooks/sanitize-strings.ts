@@ -1,4 +1,4 @@
-import DOMPurify from 'isomorphic-dompurify'
+import sanitizeHtml from 'sanitize-html'
 import type { HookContext } from '@feathersjs/feathers'
 
 /**
@@ -6,15 +6,21 @@ import type { HookContext } from '@feathersjs/feathers'
  * the database, so any later render (web page, email, mobile app) is safe by
  * default.
  *
- * `ALLOWED_TAGS: []` and `ALLOWED_ATTR: []` mean we keep the visible text but
- * remove every tag and attribute. So:
+ * `allowedTags: []` and `allowedAttributes: {}` mean we keep the visible text
+ * but remove every tag and attribute. So:
  *   "Dr. <script>steal()</script> Smith"  →  "Dr.  Smith"
  *   "Hello <b>world</b>"                   →  "Hello world"
  *   "<img onerror=alert(1) src=x>"         →  ""
  *
+ * Why `sanitize-html` instead of `isomorphic-dompurify`?
+ *   isomorphic-dompurify pulls in jsdom → html-encoding-sniffer → an ESM-only
+ *   `@exodus/bytes` package, which can't be loaded from a CommonJS Feathers
+ *   build on Node 22. sanitize-html is pure JS with no DOM emulation and no
+ *   ESM-from-CJS hazards.
+ *
  * Service paths in SKIP_PATHS bypass sanitization entirely. Currently only
  * `authentication` is skipped — its body contains `password`, which may
- * legitimately contain characters DOMPurify would mangle (e.g. `<3pa$$word`).
+ * legitimately contain characters the sanitizer would mangle (e.g. `<3pa$$word`).
  *
  * Field names in SKIP_FIELDS bypass sanitization at any depth. This protects:
  *   - credentials (passwords) being mutated into different strings
@@ -32,10 +38,20 @@ const SKIP_FIELDS = new Set<string>([
   'profilePicture'
 ])
 
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: [],
+  allowedAttributes: {},
+  // Drop tag CONTENTS for these dangerous tags (instead of leaving the inner
+  // text behind). e.g. "<script>alert(1)</script>" becomes "" not "alert(1)".
+  disallowedTagsMode: 'discard',
+  allowedSchemes: [],
+  allowedSchemesByTag: {}
+}
+
 const sanitizeValue = (value: any): any => {
   if (value === null || value === undefined) return value
   if (typeof value === 'string') {
-    return DOMPurify.sanitize(value, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+    return sanitizeHtml(value, SANITIZE_OPTIONS)
   }
   if (Array.isArray(value)) return value.map(sanitizeValue)
   if (typeof value === 'object') {
