@@ -3,7 +3,7 @@ import { logger } from './logger'
 
 // --- Required environment variable validation (fail-fast) ---
 // The server must NEVER start with missing or known-leaked secrets.
-const REQUIRED_ENV_VARS = ['JWT_SECRET', 'MONGODB_URI', 'MAIL_USER', 'MAIL_PASS'] as const
+const REQUIRED_ENV_VARS = ['JWT_SECRET', 'MONGODB_URI'] as const
 
 const KNOWN_LEAKED_SECRETS = new Set<string>([
   'IeHWgKmbax6WrUJUO68C0LaqxN25Wy9G' // original committed secret — must be rotated
@@ -16,6 +16,18 @@ if (missing.length > 0) {
       `Refer to .env.example. The server will not start.`
   )
   process.exit(1)
+}
+
+// Email is optional but warn if no provider is configured — emails will be
+// dropped (logged to console only) until RESEND_API_KEY or MAIL_USER+MAIL_PASS
+// is set.
+const hasResend = !!process.env.RESEND_API_KEY
+const hasGmail = !!process.env.MAIL_USER && !!process.env.MAIL_PASS
+if (!hasResend && !hasGmail) {
+  logger.warn(
+    'No email provider configured. Set RESEND_API_KEY (production) or MAIL_USER+MAIL_PASS (dev). ' +
+      'Password reset and appointment confirmation emails will be logged to console only.'
+  )
 }
 
 const jwtSecret = process.env.JWT_SECRET as string
