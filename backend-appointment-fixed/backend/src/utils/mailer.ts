@@ -66,6 +66,8 @@ interface AppointmentEmailData {
 
 export const sendAppointmentConfirmation = async (data: AppointmentEmailData) => {
   const transporter = getTransporter()
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
+  const appointmentsLink = `${frontendUrl}/dashboard/appointments`
   const {
     emailType, patientEmail, patientName, doctorName, date, startTime, endTime,
     consultationFee, appointmentId, clinicName, city, locality, pincode
@@ -111,7 +113,7 @@ export const sendAppointmentConfirmation = async (data: AppointmentEmailData) =>
           </table>
           <p style="color:#6b7280;font-size:14px">Please arrive 10 minutes before your appointment time. To cancel or reschedule, visit your dashboard at least 2 hours in advance.</p>
           <div style="text-align:center;margin-top:24px">
-            <a href="http://localhost:3000/dashboard/appointments" style="display:inline-block;background:#2563eb;color:white;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:600">
+            <a href="${appointmentsLink}" style="display:inline-block;background:#2563eb;color:white;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:600">
               View My Appointments
             </a>
           </div>

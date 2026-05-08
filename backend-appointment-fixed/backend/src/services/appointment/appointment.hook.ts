@@ -231,7 +231,18 @@ const sendConfirmationEmail = async (context: any) => {
       pincode: doctorProfile?.clinicAddress?.zipCode
     })
   } catch (err) {
-    console.error('[Email] Confirmation error:', err)
+    // Email failures must NOT block the booking from succeeding (the appointment
+    // is already saved). But we DO want a structured log so it shows up clearly
+    // in Render's log viewer instead of being lost in the noise.
+    console.error('[Email] Failed to send confirmation', {
+      appointmentId: context.result?._id?.toString(),
+      patientEmail: context.result?.patientEmail,
+      mailUserSet: !!process.env.MAIL_USER,
+      mailPassSet: !!process.env.MAIL_PASS,
+      error: (err as Error).message,
+      code: (err as any).code,
+      response: (err as any).response
+    })
   }
   return context
 }
