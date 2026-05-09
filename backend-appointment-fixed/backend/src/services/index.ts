@@ -11,6 +11,8 @@ import { messages }       from './messages/messages'
 import { prescriptions }  from './prescriptions/prescriptions'
 import { healthData }     from './health-data/health-data'
 import { reviews }        from './reviews/reviews'
+import { verifyOtp }      from './verify-otp/verify-otp'
+import { resendOtp }      from './resend-otp/resend-otp'
 
 export const services = (app: Application) => {
   app.configure(users)
@@ -25,4 +27,6 @@ export const services = (app: Application) => {
   app.configure(prescriptions)
   app.configure(healthData)
   app.configure(reviews)
+  app.configure(verifyOtp)
+  app.configure(resendOtp)
 }

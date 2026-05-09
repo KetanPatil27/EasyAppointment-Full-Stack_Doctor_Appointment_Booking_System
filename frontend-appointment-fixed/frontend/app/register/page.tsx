@@ -6,11 +6,11 @@ import { Footer } from '@/components/footer'
 import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useApp } from '@/lib/app-context'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import { registerUser } from '@/services/userService'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -26,7 +26,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [error, setError] = useState('')
-  const { register } = useApp()
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,22 +50,20 @@ export default function RegisterPage() {
 
     setIsLoading(true)
     try {
-      // Auto-login everyone
-      const success = await register({
+      // Step 1 of the 2-step signup flow: create the account in unverified state.
+      // The backend issues a 6-digit OTP and emails it; we redirect the user to
+      // /verify-email to enter it. Do NOT auto-login here — login is gated on
+      // emailVerified and would just throw "verify your email first."
+      await registerUser({
         name: formData.name,
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         phone: formData.phone,
         password: formData.password,
         role: userType,
       })
 
-      if (success) {
-        toast.success('Account created successfully!')
-        router.push(userType === 'patient' ? '/dashboard' : '/doctor/dashboard')
-      } else {
-        setError('Registration failed. Please try again.')
-        toast.error('Registration failed. Please try again.')
-      }
+      toast.success('Account created. Check your email for the verification code.')
+      router.push(`/verify-email?email=${encodeURIComponent(formData.email.trim().toLowerCase())}`)
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message || 'An error occurred'
       const displayMsg = msg.includes('duplicate') || msg.includes('E11000')

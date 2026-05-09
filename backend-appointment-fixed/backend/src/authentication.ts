@@ -19,6 +19,17 @@ class CustomLocalStrategy extends LocalStrategy {
       throw new InactiveAccountError(result.user?.status)
     }
 
+    // Email verification gate (Upgrade 4): every non-admin must verify their
+    // email via OTP before being allowed to authenticate. The frontend reads
+    // the `code` field on the error to know it should redirect to /verify-email.
+    if (result.user?.role !== 'admin' && result.user?.emailVerified !== true) {
+      const err: any = new Forbidden(
+        'Please verify your email first. Check your inbox for the OTP we sent at sign-up.'
+      )
+      err.data = { reason: 'email-not-verified', email: result.user.email }
+      throw err
+    }
+
     // Role validation: if the client sends a role, it must match the user's DB role
     // Admins are exempt — they can log in from any panel
     if (data.role && result.user.role !== 'admin' && result.user.role !== data.role) {

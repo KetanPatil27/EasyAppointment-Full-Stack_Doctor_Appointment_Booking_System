@@ -51,7 +51,16 @@ function LoginForm() {
       else if (user.role === 'doctor') router.replace('/doctor/dashboard')
       else router.replace('/admin')
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Login failed. Please try again.'
+      // If the account exists but isn't email-verified yet, send the user to
+      // the OTP page. The backend tags this case with `data.reason`.
+      const data = err?.response?.data
+      if (data?.data?.reason === 'email-not-verified') {
+        const target = data.data.email || email
+        toast.message('Please verify your email to continue.')
+        router.push(`/verify-email?email=${encodeURIComponent(target)}`)
+        return
+      }
+      const msg = data?.message || err?.message || 'Login failed. Please try again.'
       setError(msg)
       toast.error(msg)
     } finally {

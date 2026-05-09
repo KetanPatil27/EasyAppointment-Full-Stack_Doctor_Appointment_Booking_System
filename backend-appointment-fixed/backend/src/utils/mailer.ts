@@ -56,6 +56,47 @@ const sendEmail = async ({ to, subject, html }: SendArgs): Promise<'sent' | 'log
   return 'logged'
 }
 
+/**
+ * Send the 6-digit signup verification OTP. The OTP itself is plain in the
+ * email but stored hashed in DB. Expiry is rendered into the message so the
+ * user knows the urgency.
+ */
+export const sendOtpEmail = async (email: string, otp: string, expiryMinutes: number) => {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #e5e7eb;border-radius:8px">
+      <div style="background:#2563eb;color:white;padding:20px;border-radius:8px 8px 0 0;text-align:center">
+        <h1 style="margin:0;font-size:24px">EasyAppointment</h1>
+        <p style="margin:8px 0 0;opacity:0.9">Verify your email address</p>
+      </div>
+      <div style="padding:24px">
+        <p style="font-size:16px">Welcome — let's confirm it's you.</p>
+        <p>Enter this 6-digit code in the app to finish creating your account:</p>
+        <div style="text-align:center;margin:28px 0">
+          <div style="display:inline-block;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:12px;padding:18px 32px;font-family:'Courier New',monospace;font-size:34px;font-weight:700;letter-spacing:10px;color:#111827">
+            ${otp}
+          </div>
+        </div>
+        <p style="color:#6b7280;font-size:14px">This code expires in <strong>${expiryMinutes} minutes</strong>. If it expires, request a new one from the verification page.</p>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+        <p style="color:#6b7280;font-size:13px">Didn't try to sign up for EasyAppointment? You can safely ignore this email — no account will be activated without this code.</p>
+      </div>
+      <div style="padding:16px 24px;background:#f9fafb;border-radius:0 0 8px 8px;border-top:1px solid #e5e7eb;text-align:center">
+        <p style="color:#9ca3af;font-size:12px;margin:0">© 2026 EasyAppointment. All rights reserved.</p>
+      </div>
+    </div>
+  `
+
+  const result = await sendEmail({
+    to: email,
+    subject: `Your EasyAppointment verification code: ${otp}`,
+    html
+  })
+
+  if (result === 'logged') {
+    console.log(`[DEV] OTP for ${email}: ${otp} (expires in ${expiryMinutes} min)`)
+  }
+}
+
 export const sendResetEmail = async (email: string, token: string) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
   const resetLink = `${frontendUrl}/reset-password?token=${token}`

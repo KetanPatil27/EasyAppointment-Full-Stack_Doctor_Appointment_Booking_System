@@ -8,11 +8,21 @@ export const userSchema = Type.Object({
   phone: Type.String(),
   password: Type.String(),
   role: Type.Union([Type.Literal('patient'), Type.Literal('doctor'), Type.Literal('admin')]),
-  status: Type.Union([
-  Type.Literal('active'),
-  Type.Literal('suspended'),
-  Type.Literal('inactive')
-], { default: 'active' }),
+  status: Type.Union(
+    [Type.Literal('active'), Type.Literal('suspended'), Type.Literal('inactive')],
+    { default: 'active' }
+  ),
+
+  // ── Email-verification (Upgrade 4) ──
+  // emailVerified is the gate that login checks. Until true, the user cannot
+  // authenticate via the local strategy.
+  emailVerified: Type.Optional(Type.Boolean()),
+  // OTP state — all nullable. Populated when an OTP is issued, cleared on
+  // successful verification.
+  otpHash: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  otpExpiresAt: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
+  otpAttempts: Type.Optional(Type.Number()),
+
   createdAt: Type.Optional(Type.String({ format: 'date-time' })),
   updatedAt: Type.Optional(Type.String({ format: 'date-time' }))
 })

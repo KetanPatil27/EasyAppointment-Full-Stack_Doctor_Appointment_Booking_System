@@ -76,6 +76,11 @@ app.use('/authentication', authLimiter)
 app.use('/users', limitPostOnly(authLimiter))
 app.use('/forgot-password', limitPostOnly(authLimiter))
 app.use('/reset-password', limitPostOnly(authLimiter))
+// OTP endpoints — same auth-grade rate limit (5 failed/15 min/IP) since they
+// gate signup/login. Per-email rate limit on resend-otp is handled inside the
+// service via the cooldown check, which complements the IP-based limiter.
+app.use('/verify-otp', limitPostOnly(authLimiter))
+app.use('/resend-otp', limitPostOnly(authLimiter))
 
 // httpOnly cookie auth — wraps res.json on /authentication so the JWT issued
 // by the AuthenticationService also lands in a Set-Cookie header. Must be
