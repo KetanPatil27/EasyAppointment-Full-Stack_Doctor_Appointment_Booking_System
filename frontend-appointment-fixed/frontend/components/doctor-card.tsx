@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { MapPin, Star, Clock, IndianRupee, Languages, Building2 } from 'lucide-react'
-import { Doctor } from '@/services/doctorService'
+import { Doctor, getSpecializations } from '@/services/doctorService'
 
 interface DoctorCardProps {
   doctor: Doctor
@@ -56,12 +56,35 @@ export function DoctorCard({ doctor, avgRating = 0, reviewCount = 0 }: DoctorCar
       {/* ── Info panel ── */}
       <div className="flex flex-col flex-1 p-5 gap-3">
 
-        {/* Name & specialization */}
+        {/* Name & specializations */}
         <div>
           <h3 className="font-bold text-foreground text-lg leading-tight">
             Dr. {doctor.name || '—'}
           </h3>
-          <p className="text-primary text-sm font-semibold mt-0.5">{doctor.specialization}</p>
+          {/* Render up to 2 specializations as inline chips with overflow indicator */}
+          {(() => {
+            const specs = getSpecializations(doctor)
+            if (specs.length === 0) return null
+            const visible = specs.slice(0, 2)
+            const overflow = specs.length - visible.length
+            return (
+              <div className="flex flex-wrap items-center gap-1 mt-1">
+                {visible.map((s) => (
+                  <span
+                    key={s}
+                    className="bg-primary/10 text-primary text-xs font-semibold px-2 py-0.5 rounded-full"
+                  >
+                    {s}
+                  </span>
+                ))}
+                {overflow > 0 && (
+                  <span className="text-xs text-foreground/60 font-medium">
+                    +{overflow} more
+                  </span>
+                )}
+              </div>
+            )
+          })()}
           {clinicName && (
             <p className="flex items-center gap-1 text-xs text-foreground/60 mt-1">
               <Building2 className="h-3 w-3 text-primary/50 shrink-0" />

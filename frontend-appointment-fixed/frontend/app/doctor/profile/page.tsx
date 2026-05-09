@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import {
   getMyDoctorProfile, createDoctorProfile, updateDoctorProfile,
-  Doctor, Qualification, SPECIALIZATIONS, LANGUAGES
+  Doctor, Qualification, SPECIALIZATIONS, LANGUAGES, getSpecializations
 } from '@/services/doctorService'
 import { DoctorPendingGate } from '@/components/doctor-pending-gate'
 
@@ -60,7 +60,7 @@ export default function DoctorProfilePage() {
   const [imgError,   setImgError]   = useState('')
 
   const [form, setForm] = useState({
-    specialization:       '',
+    specializations:      [] as string[],
     bio:                  '',
     experience:           0,
     hourlyRate:           0,
@@ -84,7 +84,8 @@ export default function DoctorProfilePage() {
         setProfile(p)
         setImgPreview(p.profileImage || null)
         setForm({
-          specialization:       p.specialization       || '',
+          // Read transparently from new array OR legacy single-string field.
+          specializations:      getSpecializations(p),
           bio:                  p.bio                  || '',
           experience:           p.experience           || 0,
           hourlyRate:           p.hourlyRate           || 0,
@@ -191,9 +192,19 @@ export default function DoctorProfilePage() {
   // ── Form submit ───────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.specializations.length === 0) {
+      setError('Please add at least one specialization.')
+      return
+    }
     setSaving(true); setError(''); setSuccess(false)
     try {
-      const payload = { ...form, profileImage: imgPreview || '' }
+      // Persist the new array field; explicitly clear the legacy single-string
+      // field so any old data on this record gets cleaned up on save.
+      const payload: any = {
+        ...form,
+        specialization: '', // clear legacy single-string on every write
+        profileImage: imgPreview || ''
+      }
       if (profile?._id) {
         await updateDoctorProfile(profile._id, payload)
       } else {
@@ -345,15 +356,69 @@ export default function DoctorProfilePage() {
               <h2 className="font-semibold text-foreground">Professional Details</h2>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Specialization *</label>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Specializations * <span className="text-foreground/50 font-normal">(one or more)</span>
+                </label>
+
+                {/* Selected as chips */}
+                <div className="flex flex-wrap gap-2 mb-2 min-h-[2rem]">
+                  {form.specializations.length === 0 ? (
+                    <span className="text-sm text-foreground/40 italic">None selected yet</span>
+                  ) : (
+                    form.specializations.map((spec) => (
+                      <span
+                        key={spec}
+                        className="inline-flex items-center gap-1.5 bg-primary/10 text-primary text-sm font-medium px-3 py-1 rounded-full border border-primary/20"
+                      >
+                        {spec}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setForm((f) => ({
+                              ...f,
+                              specializations: f.specializations.filter((s) => s !== spec)
+                            }))
+                          }
+                          className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
+                          aria-label={`Remove ${spec}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+
+                {/* Add picker — only shows specializations not already selected */}
                 <select
-                  value={form.specialization} required
-                  onChange={e => setForm(f => ({ ...f, specialization: e.target.value }))}
+                  value=""
+                  onChange={(e) => {
+                    const chosen = e.target.value
+                    if (!chosen) return
+                    setForm((f) =>
+                      f.specializations.includes(chosen)
+                        ? f
+                        : { ...f, specializations: [...f.specializations, chosen] }
+                    )
+                    e.target.value = '' // reset so the same option can be added again later if removed
+                  }}
                   className={inputCls}
                 >
-                  <option value="">Select specialization…</option>
-                  {SPECIALIZATIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                  <option value="">+ Add specialization…</option>
+                  {SPECIALIZATIONS
+                    .filter((s) => !form.specializations.includes(s))
+                    .map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
                 </select>
+
+                {form.specializations.length === 0 && (
+                  <p className="text-xs text-destructive mt-1">
+                    Please select at least one specialization
+                  </p>
+                )}
               </div>
 
               <div>

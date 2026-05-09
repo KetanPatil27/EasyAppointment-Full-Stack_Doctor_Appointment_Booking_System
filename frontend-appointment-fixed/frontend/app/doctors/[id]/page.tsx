@@ -6,7 +6,7 @@ import { MapPin, Clock, IndianRupee, ArrowLeft, CheckCircle, Loader2, Star, Grad
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { getDoctorById, Doctor } from '@/services/doctorService'
+import { getDoctorById, Doctor, getSpecializations } from '@/services/doctorService'
 import { getSlotsByDoctor, bookAppointment, Slot } from '@/services/appointmentService'
 import { getReviewsByDoctor, getAverageRating, Review } from '@/services/reviewService'
 import { useApp } from '@/lib/app-context'
@@ -214,7 +214,16 @@ export default function DoctorDetailPage({ params }: { params: Promise<{ id: str
                   {/* Info */}
                   <div className="p-6 flex flex-col justify-center flex-1">
                     <h1 className="text-3xl font-bold text-foreground mb-1">Dr. {doctor.name}</h1>
-                    <p className="text-primary font-semibold text-lg mb-3">{doctor.specialization}</p>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {getSpecializations(doctor).map((s) => (
+                        <span
+                          key={s}
+                          className="bg-primary/10 text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
 
                     {/* Rating */}
                     {avgRating > 0 ? (

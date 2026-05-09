@@ -3,7 +3,17 @@ import api from './api'
 export interface Doctor {
   _id: string
   userId: string
-  specialization: string
+  /**
+   * NEW canonical field — array of one or more specializations.
+   * Always prefer this over the legacy `specialization`.
+   */
+  specializations?: string[]
+  /**
+   * LEGACY single-string field. Still appears on un-migrated records and is
+   * accepted on input for backward compatibility. Use `getSpecializations()`
+   * helper to read transparently from either field.
+   */
+  specialization?: string
   bio?: string
   experience: number
   hourlyRate: number
@@ -35,6 +45,32 @@ export interface Qualification {
   college: string
   year: number
   certification?: string
+}
+
+/**
+ * Read a doctor's specializations regardless of which field shape the record
+ * uses. During the migration window we may see records with:
+ *   - `specializations: ["A", "B"]` (new format, preferred)
+ *   - `specialization: "A"`         (legacy)
+ *   - both                           (rare; new wins)
+ *   - neither                        (incomplete profile)
+ *
+ * Always returns an array — empty if nothing is set.
+ */
+export const getSpecializations = (doctor: Pick<Doctor, 'specializations' | 'specialization'> | null | undefined): string[] => {
+  if (!doctor) return []
+  if (Array.isArray(doctor.specializations) && doctor.specializations.length > 0) {
+    return doctor.specializations
+  }
+  if (typeof doctor.specialization === 'string' && doctor.specialization.trim()) {
+    return [doctor.specialization.trim()]
+  }
+  return []
+}
+
+/** Comma-joined string for compact UI displays. */
+export const formatSpecializations = (doctor: Pick<Doctor, 'specializations' | 'specialization'> | null | undefined): string => {
+  return getSpecializations(doctor).join(', ')
 }
 
 export const SPECIALIZATIONS = [

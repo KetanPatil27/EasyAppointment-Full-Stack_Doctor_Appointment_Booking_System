@@ -7,7 +7,7 @@ import { DoctorCard } from '@/components/doctor-card'
 import { ChevronDown, Search, MapPin, Stethoscope, X } from 'lucide-react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { getAllDoctors, Doctor, SPECIALIZATIONS } from '@/services/doctorService'
+import { getAllDoctors, Doctor, SPECIALIZATIONS, getSpecializations } from '@/services/doctorService'
 import { getReviewsByDoctor, getAverageRating } from '@/services/reviewService'
 
 interface DoctorWithRating extends Doctor {
@@ -84,15 +84,18 @@ function DoctorsPageInner() {
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
-      r = r.filter(d =>
-        (d.name || '').toLowerCase().includes(q) ||
-        d.specialization.toLowerCase().includes(q) ||
-        (d.clinicAddress?.clinicName || '').toLowerCase().includes(q) ||
-        (d.clinicAddress?.locality || '').toLowerCase().includes(q) ||
-        (d.clinicAddress?.city || '').toLowerCase().includes(q) ||
-        (d.clinicAddress?.state || '').toLowerCase().includes(q) ||
-        (d.bio || '').toLowerCase().includes(q)
-      )
+      r = r.filter(d => {
+        const specs = getSpecializations(d).map((s) => s.toLowerCase())
+        return (
+          (d.name || '').toLowerCase().includes(q) ||
+          specs.some((s) => s.includes(q)) ||
+          (d.clinicAddress?.clinicName || '').toLowerCase().includes(q) ||
+          (d.clinicAddress?.locality || '').toLowerCase().includes(q) ||
+          (d.clinicAddress?.city || '').toLowerCase().includes(q) ||
+          (d.clinicAddress?.state || '').toLowerCase().includes(q) ||
+          (d.bio || '').toLowerCase().includes(q)
+        )
+      })
     }
 
     // Pincode filter — match clinicAddress.zipCode exactly
@@ -102,7 +105,10 @@ function DoctorsPageInner() {
       )
     }
 
-    if (selectedSpec) r = r.filter(d => d.specialization === selectedSpec)
+    // Specialization filter: doctor matches if ANY of their specializations equals selectedSpec.
+    if (selectedSpec) {
+      r = r.filter(d => getSpecializations(d).includes(selectedSpec))
+    }
     r = r.filter(d => d.hourlyRate >= priceRange[0] && d.hourlyRate <= priceRange[1])
 
     r.sort((a, b) =>

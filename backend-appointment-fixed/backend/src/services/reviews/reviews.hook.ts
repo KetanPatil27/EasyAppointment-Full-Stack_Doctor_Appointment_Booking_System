@@ -44,12 +44,23 @@ const joinPatientName = async (context: HookContext) => {
   return context
 }
 
-// Patient can only see their own reviews; doctor sees reviews for their doctorId; admin sees all
+// Patient sees their own reviews; doctor sees reviews for their doctorId;
+// admin sees all; anonymous public reads MUST scope to a specific doctorId
+// (otherwise we'd leak every patient's review of every doctor).
 const filterByRole = async (context: HookContext) => {
-  // If no auth token, allow read by doctorId for public pages
-  if (!context.params.user) return context
-  const { user } = context.params
   if (!context.params.query) context.params.query = {}
+
+  // Anonymous: require explicit doctorId — public doctor profile pages already
+  // pass it. Without it we'd serve a global review feed to scrapers.
+  if (!context.params.user) {
+    if (!context.params.query.doctorId) {
+      throw new BadRequest('doctorId query parameter is required for unauthenticated review queries')
+    }
+    return context
+  }
+
+  const { user } = context.params
+
   if (user.role === 'patient') {
     // Patient can filter by doctorId (for public profile) or see their own
     if (!context.params.query.doctorId) {

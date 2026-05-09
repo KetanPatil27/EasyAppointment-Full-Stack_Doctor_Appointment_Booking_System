@@ -10,7 +10,9 @@
     "dev": "nodemon -x ts-node src/index.ts",
     "compile": "shx rm -rf lib/ && tsc",
     "start": "node lib/",
-    "test": "cross-env NODE_ENV=test mocha test/ --require ts-node/register --recursive --extension .ts --exit"
+    "test": "cross-env NODE_ENV=test mocha test/ --require ts-node/register --recursive --extension .ts --exit",
+    "migrate:specializations": "ts-node scripts/migrate-doctor-specializations.ts",
+    "migrate:specializations:dry": "ts-node scripts/migrate-doctor-specializations.ts --dry-run"
   },
   "dependencies": {
     "@feathersjs/adapter-commons": "^5.0.40",
