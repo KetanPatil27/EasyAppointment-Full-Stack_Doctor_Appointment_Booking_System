@@ -74,8 +74,19 @@ export const deleteSlot = async (slotId: string) => {
   return res.data
 }
 
-export const getMySlots = async () => {
-  const res = await api.get('/slots')
+/**
+ * Fetch slots belonging to the currently logged-in doctor.
+ *
+ * The backend hook `filterSlotsByDoctor` already restricts results to the
+ * authenticated doctor's _id — passing `doctorId` here is defense-in-depth
+ * (layer 3) so the intent is explicit on the wire. If a future caller invokes
+ * this with the wrong id, the client-side request log makes the bug obvious
+ * even if the server-side filter still keeps the data safe.
+ */
+export const getMySlots = async (currentDoctorId?: string) => {
+  const params: Record<string, any> = {}
+  if (currentDoctorId) params.doctorId = currentDoctorId
+  const res = await api.get('/slots', { params })
   return res.data?.data || res.data || []
 }
 

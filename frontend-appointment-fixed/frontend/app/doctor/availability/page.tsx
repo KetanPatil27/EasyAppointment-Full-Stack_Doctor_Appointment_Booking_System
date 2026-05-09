@@ -32,9 +32,12 @@ export default function DoctorAvailabilityPage() {
   }, [isAuthLoading, isAuthenticated, currentUser])
 
   const loadSlots = async () => {
+    if (!currentUser?._id) return
     setLoading(true)
     try {
-      const data = await getMySlots()
+      // Pass currentUser._id so the wire request explicitly scopes to this doctor
+      // (layer 3 of defense-in-depth; backend hook also enforces this).
+      const data = await getMySlots(currentUser._id)
       setSlots(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Failed to load slots', err)
