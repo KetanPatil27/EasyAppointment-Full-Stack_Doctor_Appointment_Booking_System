@@ -57,6 +57,15 @@ const sendEmail = async ({ to, subject, html }: SendArgs): Promise<'sent' | 'log
 }
 
 /**
+ * Generic notification sender used by Upgrades 5–7. Just forwards subject/html
+ * to the unified `sendEmail` helper above. Kept as its own export so callers
+ * can stay decoupled from the underlying provider switch.
+ */
+export const sendNotificationEmail = async (to: string, subject: string, html: string) => {
+  return sendEmail({ to, subject, html })
+}
+
+/**
  * Send the 6-digit signup verification OTP. The OTP itself is plain in the
  * email but stored hashed in DB. Expiry is rendered into the message so the
  * user knows the urgency.

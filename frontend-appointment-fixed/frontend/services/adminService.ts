@@ -55,9 +55,32 @@ export const adminUpdateUser = async (id: string, data: Record<string, any>) => 
   return res.data
 }
 
-export const adminDeleteUser = async (id: string) => {
-  const res = await api.delete(`/users/${id}`)
+export const adminDeleteUser = async (id: string, reason?: string) => {
+  // Feathers `remove` doesn't take a body by default — pass reason as a query
+  // param so the backend hook can read it from `context.data` in v5 (see
+  // softDeleteViaCascade hook).
+  const res = await api.delete(`/users/${id}`, { data: { reason: reason || '' } })
   return res.data
+}
+
+export const adminSuspendUserWithReason = async (userId: string, reason: string) => {
+  const res = await api.patch(`/users/${userId}`, { status: 'suspended', reason })
+  return res.data
+}
+
+export const adminUnsuspendUser = async (userId: string) => {
+  const res = await api.patch(`/users/${userId}`, { status: 'active' })
+  return res.data
+}
+
+export const adminRestoreUser = async (userId: string, reason?: string) => {
+  const res = await api.post('/restore-user', { userId, reason: reason || '' })
+  return res.data
+}
+
+export const adminGetAuditLogs = async (query?: Record<string, any>) => {
+  const res = await api.get('/audit-logs', { params: { $sort: { timestamp: -1 }, $limit: 100, ...query } })
+  return res.data?.data || res.data || []
 }
 
 export const adminUpdateDoctor = async (id: string, data: Record<string, any>) => {

@@ -14,14 +14,21 @@ export const userSchema = Type.Object({
   ),
 
   // ── Email-verification (Upgrade 4) ──
-  // emailVerified is the gate that login checks. Until true, the user cannot
-  // authenticate via the local strategy.
   emailVerified: Type.Optional(Type.Boolean()),
-  // OTP state — all nullable. Populated when an OTP is issued, cleared on
-  // successful verification.
   otpHash: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   otpExpiresAt: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
   otpAttempts: Type.Optional(Type.Number()),
+
+  // ── Suspend/Delete metadata (Upgrades 5+7) ──
+  // `suspendedReason` is set when status flips to 'suspended', cleared on
+  // restore. `suspendedAt` is when the action happened.
+  suspendedReason: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  suspendedAt: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
+  // Soft delete — never hard-delete medical-data-bearing accounts. Kept for
+  // legal retention. Restorable within 30 days via admin "Restore" action.
+  isDeleted: Type.Optional(Type.Boolean()),
+  deletedAt: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
+  deletedReason: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 
   createdAt: Type.Optional(Type.String({ format: 'date-time' })),
   updatedAt: Type.Optional(Type.String({ format: 'date-time' }))

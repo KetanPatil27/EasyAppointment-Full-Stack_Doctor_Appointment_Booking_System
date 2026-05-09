@@ -6,7 +6,14 @@ const joinUserData = async (context: HookContext) => {
   const joinOne = async (doctor: any) => {
     try {
       const user = await context.app.service('users').get(doctor.userId, { provider: undefined })
-      return { ...doctor, name: user.name, email: user.email, phone: user.phone, status: user.status }
+      return {
+        ...doctor,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        status: user.status,
+        isDeleted: user.isDeleted === true
+      }
     } catch {
       return doctor
     }
@@ -19,11 +26,39 @@ const joinUserData = async (context: HookContext) => {
   return context
 }
 
+/**
+ * Public listings (anonymous + patient) must never show deleted or suspended
+ * doctors. Admins still see everything.
+ */
+const hideRemovedFromPublic = async (context: HookContext) => {
+  // Admin and internal calls bypass the filter.
+  if (!context.params.provider) return context
+  if (context.params.user?.role === 'admin') return context
+
+  // Defer to the after-hook joinUserData to filter, since the user status
+  // lives on the joined user record, not the doctor profile itself.
+  ;(context.params as any)._filterRemovedAfterJoin = true
+  return context
+}
+
+const dropRemovedAfterJoin = async (context: HookContext) => {
+  if (!(context.params as any)._filterRemovedAfterJoin) return context
+  if (Array.isArray(context.result?.data)) {
+    context.result.data = context.result.data.filter(
+      (d: any) => !d.isDeleted && d.status !== 'suspended'
+    )
+  } else if (context.result?.isDeleted || context.result?.status === 'suspended') {
+    // Single get → return null-ish to indicate the doctor is hidden.
+    context.result = { ...context.result, hidden: true }
+  }
+  return context
+}
+
 export default {
   before: {
     all: [],
-    find: [],
-    get:  [],
+    find: [hideRemovedFromPublic],
+    get:  [hideRemovedFromPublic],
     create: [
       authenticate('jwt'),
       async (context: HookContext) => {
@@ -66,8 +101,8 @@ export default {
     ]
   },
   after: {
-    find: [joinUserData],
-    get:  [joinUserData]
+    find: [joinUserData, dropRemovedAfterJoin],
+    get:  [joinUserData, dropRemovedAfterJoin]
   },
   error: {}
 }

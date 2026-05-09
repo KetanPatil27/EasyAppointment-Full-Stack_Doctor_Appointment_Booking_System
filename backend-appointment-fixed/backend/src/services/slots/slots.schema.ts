@@ -7,7 +7,15 @@ export const slotSchema = Type.Object({
   date: Type.String(),           // ISO date string e.g., "2026-02-10"
   startTime: Type.String(),      // e.g., "10:00"
   endTime: Type.String(),        // e.g., "10:30"
-  isBooked: Type.Boolean()       // default false
+  isBooked: Type.Boolean(),      // default false
+
+  // Lifecycle status (Upgrade 7).
+  // 'active'   = visible & bookable
+  // 'inactive' = hidden, doctor is suspended (preserved for restore)
+  // 'deleted'  = hidden, doctor has been (soft-)deleted
+  status: Type.Optional(
+    Type.Union([Type.Literal('active'), Type.Literal('inactive'), Type.Literal('deleted')])
+  )
 })
 
 export type Slot = Static<typeof slotSchema>

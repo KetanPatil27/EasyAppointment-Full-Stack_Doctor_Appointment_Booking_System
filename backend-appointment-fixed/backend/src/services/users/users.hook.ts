@@ -109,57 +109,96 @@ const selfOrAdmin = async (context: HookContext) => {
   return context
 }
 
-// Clean up associated data when user is deleted
-const cascadeDelete = async (context: HookContext) => {
+/**
+ * Replaced the previous hard-delete cascade with a single transactional
+ * orchestrator (utils/cascade-suspend-delete.ts) that handles suspend,
+ * unsuspend, AND soft-delete consistently. See that file for the full matrix
+ * of effects.
+ *
+ * Hook wiring:
+ *   - patch with status transition → run cascade, short-circuit Feathers's
+ *     own update so user doc + slots + appointments + audit-log all commit
+ *     in the SAME MongoDB transaction.
+ *   - remove → run cascade as soft-delete, short-circuit the actual DB delete
+ *     so historical records are retained for medical/legal compliance.
+ */
+const adminOnlyForCascade = async (context: HookContext) => {
   if (!context.params.provider) return context
-  try {
-    const userId = context.id?.toString()
-    if (!userId) return context
+  if (context.params.user?.role !== 'admin') {
+    throw new Forbidden('Only admins can suspend or delete user accounts')
+  }
+  return context
+}
 
-    // Get the user before deletion to know their role
-    const user = await context.service.get(context.id).catch(() => null)
-    if (!user) return context
+const detectSuspendTransition = async (context: HookContext) => {
+  if (!context.params.provider) return context
+  const incomingStatus = context.data?.status
+  if (incomingStatus !== 'suspended' && incomingStatus !== 'active') return context
+  if (context.params.user?.role !== 'admin') return context
+  if (!context.id) return context
 
-    // Cancel active appointments and release slots
-    const cancelStatus = user.role === 'doctor' ? 'cancelled_by_doctor' : 'cancelled_by_patient'
-    const queryField = user.role === 'doctor' ? 'doctorId' : 'patientId'
-    const appointmentService = context.app.service('appointments')
-    const slotService = context.app.service('slots')
+  const target = await context.service.get(context.id, { provider: undefined } as any).catch(() => null)
+  if (!target) return context
 
-    try {
-      const result = await appointmentService.find({
-        query: { [queryField]: userId, status: { $in: ['booked', 'confirmed'] } },
-        paginate: false,
-        provider: undefined
-      } as any)
-      const appointments = Array.isArray(result) ? result : result.data || []
-      for (const appt of appointments) {
-        await appointmentService.patch(appt._id, { status: cancelStatus }, { provider: undefined }).catch(() => {})
-        if (appt.slotId) {
-          await slotService.patch(appt.slotId, { isBooked: false }, { provider: undefined }).catch(() => {})
-        }
-      }
-    } catch {}
+  const currentStatus = target.status
+  const reason = (typeof context.data?.reason === 'string' ? context.data.reason : '').trim()
 
-    // Delete patient profile if exists
-    await context.app.service('patients').remove(null as any, {
-      query: { userId },
-      provider: undefined
-    } as any).catch(() => {})
+  let action: 'suspend' | 'unsuspend' | null = null
+  if (incomingStatus === 'suspended' && currentStatus !== 'suspended') action = 'suspend'
+  if (incomingStatus === 'active' && currentStatus === 'suspended') action = 'unsuspend'
+  if (!action) return context
 
-    // Delete doctor profile if exists
-    if (user.role === 'doctor') {
-      await context.app.service('doctors').remove(null as any, {
-        query: { userId },
-        provider: undefined
-      } as any).catch(() => {})
-      // Delete doctor's slots
-      await slotService.remove(null as any, {
-        query: { doctorId: userId },
-        provider: undefined
-      } as any).catch(() => {})
-    }
-  } catch {}
+  const { cascadeSuspendOrDelete } = await import('../../utils/cascade-suspend-delete')
+  const result = await cascadeSuspendOrDelete({
+    app: context.app,
+    action,
+    user: {
+      _id: target._id.toString(),
+      name: target.name,
+      email: target.email,
+      role: target.role
+    },
+    reason,
+    actorId: context.params.user._id.toString()
+  })
+
+  // Short-circuit Feathers' own update — the cascade already updated the user doc
+  // inside the transaction. Return the freshly fetched user as the response.
+  context.result = await context.service.get(context.id, { provider: undefined } as any)
+  ;(context.result as any).cascade = result
+  return context
+}
+
+const softDeleteViaCascade = async (context: HookContext) => {
+  if (!context.params.provider) return context
+  if (context.params.user?.role !== 'admin') {
+    throw new Forbidden('Only admins can delete user accounts')
+  }
+  if (!context.id) return context
+
+  const target = await context.service.get(context.id, { provider: undefined } as any).catch(() => null)
+  if (!target) return context
+
+  const reason = (typeof (context.data as any)?.reason === 'string' ? (context.data as any).reason : '').trim()
+
+  const { cascadeSuspendOrDelete } = await import('../../utils/cascade-suspend-delete')
+  const result = await cascadeSuspendOrDelete({
+    app: context.app,
+    action: 'delete',
+    user: {
+      _id: target._id.toString(),
+      name: target.name,
+      email: target.email,
+      role: target.role
+    },
+    reason,
+    actorId: context.params.user._id.toString()
+  })
+
+  // Short-circuit so the actual DB delete never runs — record is now
+  // soft-deleted with isDeleted: true.
+  context.result = await context.service.get(context.id, { provider: undefined } as any)
+  ;(context.result as any).cascade = result
   return context
 }
 
@@ -169,8 +208,8 @@ export default {
     get: [],
     create: [addTimestampsOnCreate, initEmailVerification, hashPassword('password')],
     update: [authenticateExternal(), selfOrAdmin, updateTimestamp, hashPassword('password')],
-    patch: [authenticateExternal(), selfOrAdmin, updateTimestamp, hashPassword('password')],
-    remove: [authenticateExternal(), selfOrAdmin, cascadeDelete]
+    patch: [authenticateExternal(), selfOrAdmin, updateTimestamp, detectSuspendTransition, hashPassword('password')],
+    remove: [authenticateExternal(), adminOnlyForCascade, softDeleteViaCascade]
   },
   after: {
     all: [protect('password', 'otpHash')],
