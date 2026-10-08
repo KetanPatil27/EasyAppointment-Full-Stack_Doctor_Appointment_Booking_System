@@ -25,17 +25,18 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export default function AdminDashboard() {
-  const { currentUser, isAuthenticated } = useApp()
+  const { currentUser, isAuthenticated, isAuthLoading } = useApp()
   const router = useRouter()
   const [stats, setStats] = useState({ totalUsers: 0, totalDoctors: 0, totalAppointments: 0 })
   const [recentAppointments, setRecentAppointments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (isAuthLoading) return
     if (!isAuthenticated || !currentUser || currentUser.role !== 'admin') {
       router.push('/admin/login')
     }
-  }, [currentUser, isAuthenticated, router])
+  }, [currentUser, isAuthenticated, isAuthLoading, router])
 
   useEffect(() => {
     if (currentUser?.role !== 'admin') return
@@ -60,78 +61,99 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
+      <div className="flex-1 min-w-0 w-full flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <div className="hidden lg:block"><AdminHeader /></div>
-        <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Dashboard</h1>
-            <p className="text-foreground/60 text-sm sm:text-base">Welcome back, {currentUser?.name}!</p>
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 md:p-8">
+          <div className="mb-5 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1 sm:mb-2">Dashboard</h1>
+            <p className="text-foreground/60 text-xs sm:text-base">Welcome back, {currentUser?.name || 'Admin'}!</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mb-5 sm:mb-8">
             {statCards.map(({ label, value, icon: Icon }) => (
-              <div key={label} className="bg-card rounded-xl border border-border p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-foreground/60 text-sm">{label}</p>
-                  <Icon className="h-5 w-5 text-primary" />
+              <div key={label} className="bg-card rounded-xl border border-border p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <p className="text-foreground/60 text-xs sm:text-sm font-medium">{label}</p>
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
-                <p className="text-3xl font-bold text-foreground">{loading ? '...' : value}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{loading ? '...' : value}</p>
               </div>
             ))}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden">
-              <div className="p-6 border-b border-border flex items-center justify-between">
-                <h2 className="text-xl font-bold text-foreground">Recent Appointments</h2>
-                <Link href="/admin/appointments" className="text-primary hover:underline text-sm font-medium">View All</Link>
+              <div className="p-4 sm:p-6 border-b border-border flex items-center justify-between">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">Recent Appointments</h2>
+                <Link href="/admin/appointments" className="text-primary hover:underline text-xs sm:text-sm font-medium">View All</Link>
               </div>
               {loading ? (
-                <div className="p-8 text-center text-foreground/50">Loading...</div>
+                <div className="p-8 text-center text-foreground/50 text-sm">Loading...</div>
               ) : recentAppointments.length === 0 ? (
-                <div className="p-8 text-center text-foreground/50">No appointments yet</div>
+                <div className="p-8 text-center text-foreground/50 text-sm">No appointments yet</div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-muted">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Patient</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Doctor</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Date</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {recentAppointments.map((apt) => (
-                        <tr key={apt._id} className="hover:bg-muted/50 transition-colors">
-                          <td className="px-6 py-4 text-sm font-medium text-foreground">{apt.patientName || 'Unknown'}</td>
-                          <td className="px-6 py-4 text-sm font-medium text-foreground">{apt.doctorName || 'Unknown'}</td>
-                          <td className="px-6 py-4 text-sm text-foreground/70">{apt.date || new Date(apt.createdAt).toLocaleDateString()}</td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_COLORS[apt.status] || 'bg-gray-100 text-gray-800'}`}>
-                              {STATUS_LABELS[apt.status] || apt.status}
-                            </span>
-                          </td>
+                <>
+                  {/* Mobile Card View (< sm) */}
+                  <div className="sm:hidden divide-y divide-border">
+                    {recentAppointments.map((apt) => (
+                      <div key={apt._id} className="p-3.5 space-y-1.5 hover:bg-muted/30 transition-colors">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-foreground text-sm truncate">{apt.patientName || 'Unknown'}</span>
+                          <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold capitalize ${STATUS_COLORS[apt.status] || 'bg-gray-100 text-gray-800'}`}>
+                            {STATUS_LABELS[apt.status] || apt.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-foreground/70">
+                          <span className="truncate">Dr. {apt.doctorName || 'Unknown'}</span>
+                          <span className="shrink-0 text-foreground/50">{apt.date || (apt.createdAt ? new Date(apt.createdAt).toLocaleDateString() : '—')}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View (>= sm) */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="px-5 sm:px-6 py-3 text-left text-sm font-semibold text-foreground">Patient</th>
+                          <th className="px-5 sm:px-6 py-3 text-left text-sm font-semibold text-foreground">Doctor</th>
+                          <th className="px-5 sm:px-6 py-3 text-left text-sm font-semibold text-foreground">Date</th>
+                          <th className="px-5 sm:px-6 py-3 text-left text-sm font-semibold text-foreground">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {recentAppointments.map((apt) => (
+                          <tr key={apt._id} className="hover:bg-muted/50 transition-colors">
+                            <td className="px-5 sm:px-6 py-3.5 sm:py-4 text-sm font-medium text-foreground">{apt.patientName || 'Unknown'}</td>
+                            <td className="px-5 sm:px-6 py-3.5 sm:py-4 text-sm font-medium text-foreground">{apt.doctorName || 'Unknown'}</td>
+                            <td className="px-5 sm:px-6 py-3.5 sm:py-4 text-sm text-foreground/70">{apt.date || (apt.createdAt ? new Date(apt.createdAt).toLocaleDateString() : '—')}</td>
+                            <td className="px-5 sm:px-6 py-3.5 sm:py-4">
+                              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_COLORS[apt.status] || 'bg-gray-100 text-gray-800'}`}>
+                                {STATUS_LABELS[apt.status] || apt.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
 
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Quick Actions</h3>
-              <div className="space-y-3">
+            <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">Quick Actions</h3>
+              <div className="space-y-2.5 sm:space-y-3">
                 {[
                   { href: '/admin/doctors', label: 'Manage Doctors', color: 'bg-primary/10 text-primary hover:bg-primary/20' },
                   { href: '/admin/users', label: 'Manage Patients', color: 'bg-accent/10 text-accent hover:bg-accent/20' },
                   { href: '/admin/appointments', label: 'View Appointments', color: 'bg-muted text-foreground hover:bg-muted/80' },
                 ].map(({ href, label, color }) => (
                   <Link key={href} href={href}
-                    className={`flex items-center justify-between w-full p-4 rounded-lg transition-colors font-medium ${color}`}
+                    className={`flex items-center justify-between w-full p-3 sm:p-4 rounded-lg transition-colors font-medium text-sm sm:text-base ${color}`}
                   >
                     <span>{label}</span><span>→</span>
                   </Link>

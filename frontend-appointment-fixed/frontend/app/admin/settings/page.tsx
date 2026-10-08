@@ -2,13 +2,25 @@
 
 import React from "react"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useApp } from '@/lib/app-context';
 import { AdminSidebar } from '@/components/admin-sidebar';
 import { AdminHeader } from '@/components/admin-header';
 import { Save, AlertCircle } from 'lucide-react';
 
 export default function AdminSettingsPage() {
+  const { currentUser, isAuthenticated, isAuthLoading } = useApp();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'general' | 'system' | 'notifications'>('general');
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+    if (!isAuthenticated || currentUser?.role !== 'admin') {
+      router.push('/admin/login');
+    }
+  }, [currentUser, isAuthenticated, isAuthLoading, router]);
+
   const [settings, setSettings] = useState({
     platformName: 'BookMyDoctor',
     supportEmail: 'support@bookmydoctor.com',
@@ -40,20 +52,20 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
+      <div className="flex-1 min-w-0 w-full flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <AdminHeader />
-        <main className="flex-1 overflow-auto">
-          <div className="p-4 sm:p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-3.5 sm:p-6 md:p-8">
             {/* Header */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-5 sm:mb-8">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1">Settings</h1>
-              <p className="text-sm sm:text-base text-foreground/60">Manage platform configuration and preferences</p>
+              <p className="text-xs sm:text-base text-foreground/60">Manage platform configuration and preferences</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 sm:gap-4 border-b border-border mb-6 sm:mb-8 overflow-x-auto pb-1 no-scrollbar">
+            <div className="flex gap-2 sm:gap-4 border-b border-border mb-5 sm:mb-8 overflow-x-auto pb-1 no-scrollbar">
               {[
                 { id: 'general', label: 'General Settings' },
                 { id: 'system', label: 'System Configuration' },

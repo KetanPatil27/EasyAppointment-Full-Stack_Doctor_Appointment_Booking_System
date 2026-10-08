@@ -9,19 +9,20 @@ import { adminGetAnalyticsData } from '@/services/adminService';
 import { useApp } from '@/lib/app-context';
 
 export default function AdminAnalyticsPage() {
-  const { currentUser, isAuthenticated } = useApp();
+  const { currentUser, isAuthenticated, isAuthLoading } = useApp();
   const router = useRouter();
   
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
+    if (isAuthLoading) return;
     if (!isAuthenticated || currentUser?.role !== 'admin') {
       router.push('/admin/login');
       return;
     }
     loadData();
-  }, [currentUser]);
+  }, [currentUser, isAuthenticated, isAuthLoading]);
 
   const loadData = async () => {
     setLoading(true);
@@ -37,9 +38,9 @@ export default function AdminAnalyticsPage() {
 
   if (loading || !data) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen bg-background overflow-hidden">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
+        <div className="flex-1 min-w-0 w-full flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
           <AdminHeader title="Analytics" />
           <main className="flex-1 overflow-auto flex items-center justify-center">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -52,22 +53,22 @@ export default function AdminAnalyticsPage() {
   const { kpis, chartData, appointmentTrends, topDoctors, revenueData } = data;
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
+      <div className="flex-1 min-w-0 w-full flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <AdminHeader title="Analytics" />
-        <main className="flex-1 overflow-auto">
-          <div className="p-4 sm:p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-3.5 sm:p-6 md:p-8">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
+            <div className="flex items-center justify-between mb-5 sm:mb-8">
               <div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1">Analytics & Reports</h1>
-                <p className="text-sm sm:text-base text-foreground/60">View comprehensive platform statistics and insights</p>
+                <p className="text-xs sm:text-base text-foreground/60">View comprehensive platform statistics and insights</p>
               </div>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-5 sm:mb-8">
               {[
                 {
                   label: 'Total Revenue',

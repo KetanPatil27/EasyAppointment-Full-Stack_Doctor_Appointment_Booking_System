@@ -82,7 +82,7 @@ export default function AdminRegisterPage() {
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           {/* Registration Card */}
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+          <div className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-lg">
             {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-foreground mb-2">Create Admin Account</h1>
