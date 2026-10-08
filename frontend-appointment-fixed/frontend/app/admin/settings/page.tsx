@@ -45,15 +45,15 @@ export default function AdminSettingsPage() {
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <AdminHeader />
         <main className="flex-1 overflow-auto">
-          <div className="p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-foreground mb-2">Settings</h1>
-              <p className="text-foreground/60">Manage platform configuration and preferences</p>
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1">Settings</h1>
+              <p className="text-sm sm:text-base text-foreground/60">Manage platform configuration and preferences</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 border-b border-border mb-8">
+            <div className="flex gap-2 sm:gap-4 border-b border-border mb-6 sm:mb-8 overflow-x-auto pb-1 no-scrollbar">
               {[
                 { id: 'general', label: 'General Settings' },
                 { id: 'system', label: 'System Configuration' },
@@ -62,7 +62,7 @@ export default function AdminSettingsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-6 py-4 font-medium border-b-2 transition-colors ${
+                  className={`px-3 sm:px-6 py-3 sm:py-4 font-medium border-b-2 whitespace-nowrap text-sm sm:text-base transition-colors shrink-0 ${
                     activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-foreground/60 hover:text-foreground'
@@ -76,7 +76,7 @@ export default function AdminSettingsPage() {
             <div className="max-w-4xl">
               {/* General Settings */}
               {activeTab === 'general' && (
-                <div className="bg-card rounded-xl border border-border p-8 space-y-6">
+                <div className="bg-card rounded-xl border border-border p-4 sm:p-6 md:p-8 space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Platform Name
@@ -170,7 +170,7 @@ export default function AdminSettingsPage() {
 
               {/* System Configuration */}
               {activeTab === 'system' && (
-                <div className="bg-card rounded-xl border border-border p-8 space-y-6">
+                <div className="bg-card rounded-xl border border-border p-4 sm:p-6 md:p-8 space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
@@ -271,7 +271,7 @@ export default function AdminSettingsPage() {
 
               {/* Notifications */}
               {activeTab === 'notifications' && (
-                <div className="bg-card rounded-xl border border-border p-8 space-y-6">
+                <div className="bg-card rounded-xl border border-border p-4 sm:p-6 md:p-8 space-y-6">
                   <div className="space-y-3 p-4 bg-muted rounded-lg">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
@@ -325,15 +325,15 @@ export default function AdminSettingsPage() {
               )}
 
               {/* Save Button */}
-              <div className="mt-8 flex gap-4">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={handleSave}
-                  className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-sm sm:text-base"
                 >
                   <Save className="w-5 h-5" />
                   Save Settings
                 </button>
-                <button className="px-8 py-3 rounded-lg border-2 border-border text-foreground font-semibold hover:bg-muted transition-colors">
+                <button className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg border-2 border-border text-foreground font-semibold hover:bg-muted transition-colors text-center text-sm sm:text-base">
                   Reset
                 </button>
               </div>

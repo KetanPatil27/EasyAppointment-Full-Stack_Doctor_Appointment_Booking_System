@@ -197,7 +197,7 @@ export default function DoctorDetailPage({ params }: { params: Promise<{ id: str
               <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
                 <div className="flex flex-col sm:flex-row gap-0">
                   {/* Profile image — square */}
-                  <div className="w-full sm:w-52 sm:min-h-[200px] shrink-0 bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center overflow-hidden">
+                  <div className="w-full sm:w-52 h-56 sm:h-auto sm:min-h-[200px] shrink-0 bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center overflow-hidden">
                     {doctor.profileImage ? (
                       <img
                         src={doctor.profileImage}
@@ -212,8 +212,8 @@ export default function DoctorDetailPage({ params }: { params: Promise<{ id: str
                   </div>
 
                   {/* Info */}
-                  <div className="p-6 flex flex-col justify-center flex-1">
-                    <h1 className="text-3xl font-bold text-foreground mb-1">Dr. {doctor.name}</h1>
+                  <div className="p-4 sm:p-6 flex flex-col justify-center flex-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Dr. {doctor.name}</h1>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {getSpecializations(doctor).map((s) => (
                         <span
@@ -367,7 +367,7 @@ export default function DoctorDetailPage({ params }: { params: Promise<{ id: str
 
             {/* ── Right: Booking Panel ── */}
             <div className="lg:col-span-1">
-              <div className="rounded-2xl border border-border bg-card p-6 sticky top-24 shadow-sm">
+              <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 lg:sticky lg:top-24 shadow-sm">
                 <h2 className="text-xl font-bold text-foreground mb-1">Book Appointment</h2>
                 <p className="text-sm text-foreground/50 mb-5">
                   ₹{doctor.hourlyRate} · {doctor.consultationDuration || 30} min

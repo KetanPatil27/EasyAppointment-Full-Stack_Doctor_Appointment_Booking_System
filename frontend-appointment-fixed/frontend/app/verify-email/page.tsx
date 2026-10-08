@@ -93,7 +93,7 @@ function VerifyEmailInner() {
 
   return (
     <div className="w-full max-w-md px-4">
-      <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+      <div className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-lg">
         <div className="flex justify-center mb-5">
           <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
             <Mail className="h-7 w-7 text-primary" />
@@ -177,7 +177,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 flex items-center justify-center py-12 md:py-20">
+      <main className="flex-1 flex items-center justify-center py-8 sm:py-12 md:py-20">
         <Suspense
           fallback={
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />

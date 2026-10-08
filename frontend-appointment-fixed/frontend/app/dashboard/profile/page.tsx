@@ -118,17 +118,17 @@ export default function ProfilePage() {
       <DashboardSidebar />
       <main className="flex-1">
         <div className="border-b border-border">
-          <div className="mx-auto max-w-3xl px-8 py-6">
-            <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
-            <p className="text-foreground/60 mt-1">
+          <div className="mx-auto max-w-3xl px-4 sm:px-8 py-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">My Profile</h1>
+            <p className="text-foreground/60 mt-1 text-sm">
               {existingProfile ? 'Update your medical profile' : 'Complete your medical profile'}
             </p>
           </div>
         </div>
 
-        <div className="mx-auto max-w-3xl px-8 py-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-8 py-6 sm:py-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
               <h2 className="font-bold text-foreground mb-4">Personal Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
               <h2 className="font-bold text-foreground mb-4">Medical Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -195,7 +195,7 @@ export default function ProfilePage() {
             {success && <p className="text-green-600 text-sm">{success}</p>}
 
             <button type="submit" disabled={saving}
-              className="flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50">
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50">
               <Save className="h-4 w-4" />
               {saving ? 'Saving...' : 'Save Profile'}
             </button>

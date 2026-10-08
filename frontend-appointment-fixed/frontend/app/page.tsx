@@ -42,22 +42,22 @@ export default function LandingPage() {
           <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-20">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6 text-balance">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4 sm:mb-6 text-balance">
                   Book Doctor Appointments Anytime, Anywhere
                 </h1>
-                <p className="text-lg text-foreground/70 mb-8 leading-relaxed">
+                <p className="text-base sm:text-lg text-foreground/70 mb-6 sm:mb-8 leading-relaxed">
                   Connect with qualified healthcare professionals, schedule appointments at your convenience, and receive expert medical care near you.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Link
                     href="/doctors"
-                    className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center justify-center rounded-lg bg-primary px-6 sm:px-8 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors w-full sm:w-auto"
                   >
                     Book Appointment
                   </Link>
                   <Link
                     href="#how-it-works"
-                    className="inline-flex items-center justify-center rounded-lg border-2 border-primary px-8 py-3 text-base font-semibold text-primary hover:bg-primary/5 transition-colors"
+                    className="inline-flex items-center justify-center rounded-lg border-2 border-primary px-6 sm:px-8 py-3 text-base font-semibold text-primary hover:bg-primary/5 transition-colors w-full sm:w-auto"
                   >
                     Learn More
                   </Link>
@@ -139,26 +139,28 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 sm:px-8 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors w-full sm:w-auto"
                   >
                     <Search className="h-4 w-4" />
                     Search Doctors
                   </button>
-                  {(searchQuery || pincode || locality || selectedSpec) && (
-                    <button
-                      type="button"
-                      onClick={() => { setSearchQuery(''); setPincode(''); setLocality(''); setSelectedSpec('') }}
-                      className="text-sm text-foreground/50 hover:text-foreground transition-colors"
-                    >
-                      Clear
-                    </button>
-                  )}
-                  <Link href="/doctors" className="ml-auto text-sm text-primary hover:underline font-medium">
-                    Browse all doctors →
-                  </Link>
+                  <div className="flex items-center justify-between sm:justify-start gap-4">
+                    {(searchQuery || pincode || locality || selectedSpec) && (
+                      <button
+                        type="button"
+                        onClick={() => { setSearchQuery(''); setPincode(''); setLocality(''); setSelectedSpec('') }}
+                        className="text-sm text-foreground/50 hover:text-foreground transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
+                    <Link href="/doctors" className="sm:ml-auto text-sm text-primary hover:underline font-medium">
+                      Browse all doctors →
+                    </Link>
+                  </div>
                 </div>
               </form>
             </div>
@@ -249,15 +251,15 @@ export default function LandingPage() {
         {/* ── CTA ── */}
         <section className="py-12 md:py-20">
           <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-20">
-            <div className="rounded-3xl bg-gradient-to-br from-primary to-accent p-12 md:p-16 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
+            <div className="rounded-3xl bg-gradient-to-br from-primary to-accent p-6 sm:p-10 md:p-16 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-foreground mb-4 sm:mb-6">
                 Ready to Book Your Appointment?
               </h2>
-              <p className="text-lg text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-primary-foreground/90 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Join our community of satisfied patients and get expert healthcare at your fingertips.
               </p>
               <Link href="/doctors"
-                className="inline-flex items-center justify-center rounded-lg bg-background px-8 py-4 text-base font-semibold text-foreground hover:bg-background/90 transition-colors">
+                className="inline-flex items-center justify-center rounded-lg bg-background px-6 sm:px-8 py-3.5 sm:py-4 text-base font-semibold text-foreground hover:bg-background/90 transition-colors w-full sm:w-auto">
                 Explore Doctors Now
               </Link>
             </div>

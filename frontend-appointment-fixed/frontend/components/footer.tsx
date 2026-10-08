@@ -3,8 +3,8 @@ import { Heart, Clock, Users } from 'lucide-react';
 export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30">
-      <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-20 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-20 py-10 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h3 className="font-bold text-foreground mb-4">EasyAppointment</h3>
             <p className="text-sm text-foreground/60">Making healthcare accessible to everyone, everywhere.</p>
@@ -37,8 +37,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-foreground/60">
+        <div className="border-t border-border pt-6 md:pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-foreground/60 text-center sm:text-left">
             <div>© 2026 EasyAppointment. All rights reserved.</div>
             <div className="flex gap-6">
               <a href="#" className="hover:text-foreground transition-colors">Twitter</a>

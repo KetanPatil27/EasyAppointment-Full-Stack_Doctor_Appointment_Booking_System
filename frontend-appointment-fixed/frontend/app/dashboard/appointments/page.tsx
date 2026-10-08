@@ -286,19 +286,19 @@ export default function PatientAppointmentsPage() {
       )}
 
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
-        <div className="p-6 md:p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-1">My Appointments</h1>
-            <p className="text-foreground/60">Manage and track your medical appointments</p>
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">My Appointments</h1>
+            <p className="text-foreground/60 text-sm">Manage and track your medical appointments</p>
           </div>
 
           {/* Filter tabs */}
-          <div className="flex gap-2 mb-6 flex-wrap">
+          <div className="flex gap-2 mb-6 flex-wrap overflow-x-auto pb-1">
             {(['all', 'booked', 'confirmed', 'completed', 'cancelled'] as const).map(status => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
+                className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium capitalize transition-colors whitespace-nowrap ${
                   filter === status
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-foreground/70 hover:bg-muted/80'
@@ -319,7 +319,7 @@ export default function PatientAppointmentsPage() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-12 text-center">
+            <div className="rounded-xl border border-border bg-card p-8 sm:p-12 text-center">
               <Calendar className="h-12 w-12 text-foreground/20 mx-auto mb-4" />
               <p className="text-foreground/60 mb-4">
                 {filter === 'all' ? 'No appointments yet' : `No ${filter} appointments`}
@@ -340,12 +340,12 @@ export default function PatientAppointmentsPage() {
                 const clinicStreet = apt.clinicAddress?.street
 
                 return (
-                  <div key={apt._id} className="rounded-xl border border-border bg-card p-6">
-                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div key={apt._id} className="rounded-xl border border-border bg-card p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                       {/* Doctor info */}
-                      <div className="flex items-start gap-4 min-w-0">
-                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <User className="h-6 w-6 text-primary" />
+                      <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                         </div>
                         <div className="min-w-0">
                           <h3 className="font-semibold text-foreground text-base">
@@ -354,10 +354,10 @@ export default function PatientAppointmentsPage() {
                           {apt.doctorSpec && (
                             <p className="text-sm text-primary">{apt.doctorSpec}</p>
                           )}
-                          <div className="flex flex-wrap gap-3 mt-2 text-sm text-foreground/60">
+                          <div className="flex flex-wrap gap-2 sm:gap-3 mt-2 text-xs sm:text-sm text-foreground/60">
                             {apt.date && (
                               <span className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4 shrink-0" />
+                                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                                 {new Date(apt.date + 'T00:00:00').toLocaleDateString('en-IN', {
                                   weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
                                 })}
@@ -365,19 +365,19 @@ export default function PatientAppointmentsPage() {
                             )}
                             {apt.startTime && (
                               <span className="flex items-center gap-1">
-                                <Clock className="h-4 w-4 shrink-0" />
+                                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                                 {apt.startTime}{apt.endTime && ` – ${apt.endTime}`}
                               </span>
                             )}
                             {(clinicStreet || clinicCity) && (
                               <span className="flex items-center gap-1">
-                                <MapPin className="h-4 w-4 shrink-0" />
+                                <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                                 {[clinicStreet, clinicCity].filter(Boolean).join(', ')}
                               </span>
                             )}
                             {apt.consultationFee !== undefined && apt.consultationFee > 0 && (
                               <span className="flex items-center gap-1">
-                                <IndianRupee className="h-4 w-4 shrink-0" />
+                                <IndianRupee className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                                 ₹{apt.consultationFee}
                               </span>
                             )}
@@ -389,7 +389,7 @@ export default function PatientAppointmentsPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col items-end gap-2 shrink-0">
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start w-full sm:w-auto gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 border-border">
                         <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_STYLES[apt.status]}`}>
                           <StatusIcon className="h-3.5 w-3.5" />
                           {apt.status}

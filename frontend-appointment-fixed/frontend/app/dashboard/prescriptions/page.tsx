@@ -132,10 +132,10 @@ export default function PrescriptionsPage() {
     <div className="min-h-screen bg-background flex">
       <DashboardSidebar />
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
-        <div className="p-6 md:p-8 max-w-3xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-1">My Prescriptions</h1>
-            <p className="text-foreground/60">Prescriptions issued by your doctors</p>
+        <div className="p-4 sm:p-6 md:p-8 max-w-3xl">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">My Prescriptions</h1>
+            <p className="text-foreground/60 text-sm">Prescriptions issued by your doctors</p>
           </div>
 
           {loading ? (

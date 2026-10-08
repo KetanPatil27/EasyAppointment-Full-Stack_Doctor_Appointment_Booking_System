@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { DoctorSidebar } from '@/components/doctor-sidebar'
 import { useApp } from '@/lib/app-context'
 import { getConversation, getConversationList, sendMessage, Message } from '@/services/messageService'
-import { Send, User, Loader2, MessageSquare } from 'lucide-react'
+import { Send, User, Loader2, MessageSquare, ArrowLeft } from 'lucide-react'
 import api from '@/services/api'
 
 interface Contact {
@@ -132,7 +132,7 @@ export default function DoctorMessagesPage() {
       <div className="flex-1 flex overflow-hidden ml-0 pt-14 lg:ml-64 lg:pt-0">
 
         {/* Contacts panel */}
-        <div className="w-72 border-r border-border bg-card flex flex-col shrink-0 overflow-hidden">
+        <div className={`w-full md:w-72 border-r border-border bg-card flex flex-col shrink-0 overflow-hidden ${selectedContact ? 'hidden md:flex' : 'flex'}`}>
           <div className="px-4 py-5 border-b border-border">
             <h2 className="text-lg font-bold text-foreground">Messages</h2>
             <p className="text-xs text-foreground/50 mt-0.5">Patient conversations</p>
@@ -176,16 +176,23 @@ export default function DoctorMessagesPage() {
         </div>
 
         {/* Chat area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className={`flex-1 flex flex-col overflow-hidden ${selectedContact ? 'flex' : 'hidden md:flex'}`}>
           {selectedContact ? (
             <>
               {/* Header */}
-              <div className="px-6 py-4 border-b border-border bg-card flex items-center gap-3 shrink-0">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card flex items-center gap-3 shrink-0">
+                <button
+                  onClick={() => setSelectedContact(null)}
+                  className="md:hidden p-1.5 -ml-1 rounded-lg hover:bg-muted text-foreground/70 transition-colors"
+                  aria-label="Back to conversations"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                   <User className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground">{selectedContact.name}</p>
+                <div className="min-w-0">
+                  <p className="font-semibold text-foreground truncate">{selectedContact.name}</p>
                   <p className="text-xs text-foreground/50">Patient</p>
                 </div>
               </div>

@@ -75,7 +75,7 @@ export default function DashboardPage() {
 
         {/* Page header */}
         <div className="border-b border-border">
-          <div className="px-4 sm:px-8 py-6">
+          <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
               Welcome back, {currentUser.name}!
             </h1>
@@ -83,17 +83,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="px-4 sm:px-8 py-8 max-w-5xl">
+        <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 max-w-5xl">
 
           {/* ── Quick actions — prominent "Find a Doctor" at top ── */}
-          <section className="mb-10">
+          <section className="mb-8 sm:mb-10">
             <h2 className="text-sm font-semibold text-foreground/50 uppercase tracking-wider mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
 
               {/* Find a Doctor — primary action */}
               <Link
                 href="/doctors"
-                className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+                className="group flex flex-col items-center gap-3 p-5 sm:p-6 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
               >
                 <div className="h-12 w-12 rounded-2xl bg-primary-foreground/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Search className="h-6 w-6" />
@@ -107,7 +107,7 @@ export default function DashboardPage() {
               {/* View Appointments */}
               <Link
                 href="/dashboard/appointments"
-                className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="group flex flex-col items-center gap-3 p-5 sm:p-6 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Calendar className="h-6 w-6 text-primary" />
@@ -121,7 +121,7 @@ export default function DashboardPage() {
               {/* Messages */}
               <Link
                 href="/dashboard/messages"
-                className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="group flex flex-col items-center gap-3 p-5 sm:p-6 rounded-2xl bg-card border border-border hover:border-primary/40 hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <MessageSquare className="h-6 w-6 text-primary" />
@@ -135,28 +135,28 @@ export default function DashboardPage() {
           </section>
 
           {/* ── Stats ── */}
-          <section className="mb-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="rounded-xl border border-border bg-card p-6">
+          <section className="mb-8 sm:mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Calendar className="h-8 w-8 text-primary" />
-                  <span className="text-3xl font-bold text-foreground">{loading ? '—' : upcomingAppts.length}</span>
+                  <Calendar className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+                  <span className="text-2xl sm:text-3xl font-bold text-foreground">{loading ? '—' : upcomingAppts.length}</span>
                 </div>
-                <p className="font-semibold text-foreground">Upcoming</p>
-                <p className="text-sm text-foreground/50 mt-0.5">Booked & confirmed</p>
+                <p className="font-semibold text-foreground text-sm sm:text-base">Upcoming</p>
+                <p className="text-xs sm:text-sm text-foreground/50 mt-0.5">Booked & confirmed</p>
               </div>
-              <div className="rounded-xl border border-border bg-card p-6">
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                  <span className="text-3xl font-bold text-foreground">{loading ? '—' : completedAppts.length}</span>
+                  <CheckCircle className="h-7 w-7 sm:h-8 sm:w-8 text-green-500" />
+                  <span className="text-2xl sm:text-3xl font-bold text-foreground">{loading ? '—' : completedAppts.length}</span>
                 </div>
-                <p className="font-semibold text-foreground">Completed</p>
-                <p className="text-sm text-foreground/50 mt-0.5">Past consultations</p>
+                <p className="font-semibold text-foreground text-sm sm:text-base">Completed</p>
+                <p className="text-xs sm:text-sm text-foreground/50 mt-0.5">Past consultations</p>
               </div>
-              <div className="rounded-xl border border-border bg-card p-6">
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <Clock className="h-8 w-8 text-red-400" />
-                  <span className="text-3xl font-bold text-foreground">{loading ? '—' : cancelledAppts.length}</span>
+                  <Clock className="h-7 w-7 sm:h-8 sm:w-8 text-red-400" />
+                  <span className="text-2xl sm:text-3xl font-bold text-foreground">{loading ? '—' : cancelledAppts.length}</span>
                 </div>
                 <p className="font-semibold text-foreground">Cancelled</p>
                 <p className="text-sm text-foreground/50 mt-0.5">Cancelled appointments</p>
@@ -195,7 +195,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-border bg-card p-10 text-center">
+              <div className="rounded-2xl border border-border bg-card p-6 sm:p-10 text-center">
                 <Calendar className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
                 <p className="text-foreground/60 font-medium mb-4">No upcoming appointments</p>
                 <Link

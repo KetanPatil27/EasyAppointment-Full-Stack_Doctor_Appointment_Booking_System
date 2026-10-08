@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { DoctorCard } from '@/components/doctor-card'
-import { ChevronDown, Search, MapPin, Stethoscope, X } from 'lucide-react'
+import { ChevronDown, Search, MapPin, Stethoscope, X, SlidersHorizontal } from 'lucide-react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getAllDoctors, Doctor, SPECIALIZATIONS, getSpecializations } from '@/services/doctorService'
@@ -22,6 +22,7 @@ function DoctorsPageInner() {
 
   const [doctors,  setDoctors]  = useState<DoctorWithRating[]>([])
   const [loading,  setLoading]  = useState(true)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // Filter state — initialised from URL params (set by homepage search)
   const [searchQuery,  setSearchQuery]  = useState(() => {
@@ -125,10 +126,10 @@ function DoctorsPageInner() {
       <main className="flex-1">
 
         {/* Page heading */}
-        <section className="border-b border-border bg-muted/30 py-8 md:py-12">
+        <section className="border-b border-border bg-muted/30 py-6 sm:py-8 md:py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">Find Your Doctor</h1>
-            <p className="text-lg text-foreground/60">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2">Find Your Doctor</h1>
+            <p className="text-base sm:text-lg text-foreground/60">
               {loading ? 'Loading…' : `${doctors.length} qualified healthcare professional${doctors.length !== 1 ? 's' : ''} available`}
             </p>
             {/* Active search summary */}
@@ -146,11 +147,30 @@ function DoctorsPageInner() {
           </div>
         </section>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+          {/* Mobile filter toggle bar */}
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card text-foreground font-medium text-sm shadow-sm"
+            >
+              <SlidersHorizontal className="h-4 w-4 text-primary" />
+              <span>{showMobileFilters ? 'Hide Filters' : 'Show Filters'}</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            <span className="text-xs text-foreground/50">
+              {filtered.length} doctor{filtered.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
 
             {/* ── Filters sidebar ── */}
-            <aside className="lg:col-span-1">
+            <aside className={`lg:col-span-1 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
               <div className="sticky top-6 space-y-5 bg-card border border-border rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-bold text-foreground">Filters</p>

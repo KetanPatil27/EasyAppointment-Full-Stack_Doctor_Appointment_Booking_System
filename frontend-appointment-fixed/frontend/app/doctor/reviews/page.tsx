@@ -51,28 +51,28 @@ export default function DoctorReviewsPage() {
     <div className="flex min-h-screen bg-background">
       <DoctorSidebar />
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
-        <div className="p-6 md:p-8 max-w-3xl">
-          <h1 className="text-3xl font-bold text-foreground mb-1">Patient Reviews</h1>
-          <p className="text-foreground/60 mb-8">See what patients say about you</p>
+        <div className="p-4 sm:p-6 md:p-8 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Patient Reviews</h1>
+          <p className="text-sm sm:text-base text-foreground/60 mb-6 sm:mb-8">See what patients say about you</p>
 
           {loading ? (
             <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : reviews.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-12 text-center">
+            <div className="rounded-xl border border-border bg-card p-8 sm:p-12 text-center">
               <MessageSquare className="h-12 w-12 text-foreground/20 mx-auto mb-4" />
               <p className="text-foreground/60 font-medium">No reviews yet</p>
-              <p className="text-sm text-foreground/40 mt-1">Reviews from patients will appear here after completed appointments</p>
+              <p className="text-xs sm:text-sm text-foreground/40 mt-1">Reviews from patients will appear here after completed appointments</p>
             </div>
           ) : (
             <>
-              <div className="rounded-xl border border-border bg-card p-6 mb-6">
-                <div className="flex items-center gap-8">
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6 mb-6">
+                <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
                   <div className="text-center">
-                    <p className="text-5xl font-bold text-foreground">{avg.toFixed(1)}</p>
+                    <p className="text-4xl sm:text-5xl font-bold text-foreground">{avg.toFixed(1)}</p>
                     <StarRow rating={Math.round(avg)} />
-                    <p className="text-sm text-foreground/50 mt-1">{reviews.length} reviews</p>
+                    <p className="text-xs sm:text-sm text-foreground/50 mt-1">{reviews.length} reviews</p>
                   </div>
-                  <div className="flex-1 space-y-2">
+                  <div className="w-full sm:flex-1 space-y-2">
                     {dist.map(({ star, count, pct }) => (
                       <div key={star} className="flex items-center gap-3 text-sm">
                         <span className="text-foreground/60 w-4 text-right">{star}</span>
@@ -88,10 +88,10 @@ export default function DoctorReviewsPage() {
               </div>
               <div className="space-y-4">
                 {reviews.map(review => (
-                  <div key={review._id} className="rounded-xl border border-border bg-card p-5">
-                    <div className="flex items-start justify-between gap-3 mb-2">
+                  <div key={review._id} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3 mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
+                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold shrink-0">
                           {(review.patientName || 'P')[0].toUpperCase()}
                         </div>
                         <div>
@@ -101,9 +101,11 @@ export default function DoctorReviewsPage() {
                           </p>
                         </div>
                       </div>
-                      <StarRow rating={review.rating} />
+                      <div className="self-start sm:self-auto pl-12 sm:pl-0">
+                        <StarRow rating={review.rating} />
+                      </div>
                     </div>
-                    {review.text && <p className="text-sm text-foreground/70">{review.text}</p>}
+                    {review.text && <p className="text-sm text-foreground/70 pl-12 sm:pl-0">{review.text}</p>}
                   </div>
                 ))}
               </div>

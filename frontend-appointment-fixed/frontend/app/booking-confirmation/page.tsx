@@ -89,24 +89,24 @@ function ConfirmationContent() {
       <main className="flex-1 py-12 md:py-20">
         <div className="mx-auto max-w-2xl px-4">
           {/* Success Card */}
-          <div className="rounded-2xl border border-border bg-card p-8 md:p-12 mb-8">
+          <div className="rounded-2xl border border-border bg-card p-5 sm:p-8 md:p-12 mb-8">
             {/* Success Icon */}
-            <div className="flex justify-center mb-8">
-              <div className="rounded-full bg-green-100 p-6 dark:bg-green-900/20">
-                <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400" />
+            <div className="flex justify-center mb-6 sm:mb-8">
+              <div className="rounded-full bg-green-100 p-4 sm:p-6 dark:bg-green-900/20">
+                <CheckCircle className="h-12 w-12 sm:h-16 sm:w-16 text-green-600 dark:text-green-400" />
               </div>
             </div>
 
             {/* Success Message */}
-            <div className="text-center mb-12">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Booking Confirmed!</h1>
-              <p className="text-lg text-foreground/60">
+            <div className="text-center mb-8 sm:mb-12">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">Booking Confirmed!</h1>
+              <p className="text-base sm:text-lg text-foreground/60">
                 Your appointment has been successfully booked. You'll receive a confirmation email shortly.
               </p>
             </div>
 
             {/* Appointment Details */}
-            <div className="bg-muted/30 rounded-xl p-6 md:p-8 mb-8 space-y-6">
+            <div className="bg-muted/30 rounded-xl p-4 sm:p-6 md:p-8 mb-8 space-y-5 sm:space-y-6">
               <div>
                 <p className="text-sm text-foreground/60 mb-2">Confirmation Number</p>
                 <p className="text-2xl font-bold text-foreground">{appointment._id.slice(-8).toUpperCase()}</p>

@@ -98,7 +98,7 @@ export function OtpInput({
   }
 
   return (
-    <div className="flex gap-2 sm:gap-3 justify-center">
+    <div className="flex gap-1.5 sm:gap-3 justify-center">
       {Array.from({ length: 6 }).map((_, i) => {
         const ch = value[i] ?? ''
         return (
@@ -119,7 +119,7 @@ export function OtpInput({
             onFocus={() => setFocusedIndex(i)}
             aria-label={`Digit ${i + 1} of 6`}
             className={[
-              'h-12 w-10 sm:h-14 sm:w-12 text-center text-xl sm:text-2xl font-bold rounded-lg border-2 bg-background text-foreground',
+              'h-11 w-9 sm:h-14 sm:w-12 text-center text-lg sm:text-2xl font-bold rounded-lg border-2 bg-background text-foreground',
               'transition-all',
               disabled ? 'opacity-50' : '',
               error

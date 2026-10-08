@@ -70,9 +70,9 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 flex items-center justify-center py-12 md:py-20">
+      <main className="flex-1 flex items-center justify-center py-8 sm:py-12 md:py-20">
         <div className="w-full max-w-md px-4">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-lg">
             <Link
               href="/login"
               className="inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground mb-6"
@@ -81,9 +81,9 @@ export default function ForgotPasswordPage() {
               Back to Login
             </Link>
 
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">Forgot Password</h1>
-              <p className="text-foreground/60">Enter your email and we'll send you a reset link</p>
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Forgot Password</h1>
+              <p className="text-xs sm:text-sm text-foreground/60">Enter your email and we'll send you a reset link</p>
             </div>
 
             {isSent ? (

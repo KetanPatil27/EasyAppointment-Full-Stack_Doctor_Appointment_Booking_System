@@ -6,7 +6,7 @@ import { useApp } from '@/lib/app-context'
 export function AdminHeader({ title }: { title?: string } = {}) {
   const { currentUser } = useApp()
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-40">
+    <header className="hidden lg:block bg-card border-b border-border sticky top-0 z-40">
       <div className="px-6 py-4 flex items-center justify-end">
         <div className="flex items-center gap-3">
           <div className="text-right">

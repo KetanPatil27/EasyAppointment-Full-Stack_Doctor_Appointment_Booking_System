@@ -63,14 +63,14 @@ export default function AdminDashboard() {
     <div className="flex h-screen bg-background">
       <AdminSidebar />
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
-        <AdminHeader />
-        <main className="flex-1 overflow-auto p-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>
-            <p className="text-foreground/60">Welcome back, {currentUser?.name}!</p>
+        <div className="hidden lg:block"><AdminHeader /></div>
+        <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Dashboard</h1>
+            <p className="text-foreground/60 text-sm sm:text-base">Welcome back, {currentUser?.name}!</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {statCards.map(({ label, value, icon: Icon }) => (
               <div key={label} className="bg-card rounded-xl border border-border p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             <div className="lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden">
               <div className="p-6 border-b border-border flex items-center justify-between">
                 <h2 className="text-xl font-bold text-foreground">Recent Appointments</h2>

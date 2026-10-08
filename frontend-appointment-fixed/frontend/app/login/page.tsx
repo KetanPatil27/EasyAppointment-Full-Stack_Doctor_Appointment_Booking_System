@@ -70,8 +70,8 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md px-4">
-      <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
-        <div className="text-center mb-8">
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-lg">
+        <div className="text-center mb-6 sm:mb-8">
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-xl mb-3 shadow-sm">
             <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-7">
               <circle cx="16" cy="10" r="5" stroke="white" strokeWidth="2" fill="none" />
@@ -81,8 +81,8 @@ function LoginForm() {
               <path d="M14 21 C14 20, 13 19, 14.5 19 C15.5 19, 16 20, 16 20 C16 20, 16.5 19, 17.5 19 C19 19, 18 20, 18 21 C18 22, 16 23.5, 16 23.5 C16 23.5, 14 22, 14 21Z" fill="white" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-1">Welcome Back</h1>
-          <p className="text-foreground/60">Sign in to your EasyAppointment account</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Welcome Back</h1>
+          <p className="text-xs sm:text-sm text-foreground/60">Sign in to your EasyAppointment account</p>
         </div>
 
         <div className="mb-6">

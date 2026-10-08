@@ -83,12 +83,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 flex items-center justify-center py-12 md:py-20">
+      <main className="flex-1 flex items-center justify-center py-8 sm:py-12 md:py-20">
         <div className="w-full max-w-md px-4">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">Create Account</h1>
-              <p className="text-foreground/60">Join EasyAppointment today</p>
+          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-lg">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Create Account</h1>
+              <p className="text-xs sm:text-sm text-foreground/60">Join EasyAppointment today</p>
             </div>
 
             <div className="mb-6">

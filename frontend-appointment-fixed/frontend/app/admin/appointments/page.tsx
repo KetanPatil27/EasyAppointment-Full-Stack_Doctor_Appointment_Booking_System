@@ -59,31 +59,31 @@ export default function AdminAppointmentsPage() {
       <AdminSidebar />
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <AdminHeader />
-        <main className="flex-1 overflow-auto p-8">
-          <div className="flex items-center justify-between mb-8">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-1">Appointments</h1>
-              <p className="text-foreground/60">{appointments.length} total appointments</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1">Appointments</h1>
+              <p className="text-sm sm:text-base text-foreground/60">{appointments.length} total appointments</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <select
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="all">All Status</option>
                 {['booked', 'confirmed', 'completed', 'cancelled', 'cancelled_by_patient', 'cancelled_by_doctor', 'rejected'].map(s => (
                   <option key={s} value={s}>{STATUS_LABELS[s] || s}</option>
                 ))}
               </select>
-              <div className="relative">
+              <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
                 <input
                   type="text"
                   placeholder="Search by name, date..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>

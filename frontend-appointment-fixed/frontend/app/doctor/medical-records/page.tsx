@@ -330,14 +330,14 @@ export default function DoctorMedicalRecordsPage() {
                 />
               </div>
 
-              <div className="flex gap-3 pt-1">
+              <div className="flex flex-col sm:flex-row gap-3 pt-1">
                 <button type="submit" disabled={saving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   {saving ? 'Saving…' : 'Create Prescription'}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)}
-                  className="px-6 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted text-sm font-medium transition-colors">
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted text-sm font-medium transition-colors text-center">
                   Cancel
                 </button>
               </div>

@@ -57,17 +57,17 @@ export default function AdminAnalyticsPage() {
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-64 pt-14 lg:pt-0">
         <AdminHeader title="Analytics" />
         <main className="flex-1 overflow-auto">
-          <div className="p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
               <div>
-                <h1 className="text-4xl font-bold text-foreground mb-2">Analytics & Reports</h1>
-                <p className="text-foreground/60">View comprehensive platform statistics and insights</p>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-1">Analytics & Reports</h1>
+                <p className="text-sm sm:text-base text-foreground/60">View comprehensive platform statistics and insights</p>
               </div>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {[
                 {
                   label: 'Total Revenue',
@@ -100,12 +100,12 @@ export default function AdminAnalyticsPage() {
               ].map((kpi) => {
                 const Icon = kpi.icon;
                 return (
-                  <div key={kpi.label} className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-foreground/60 text-sm font-medium">{kpi.label}</p>
-                      <Icon className={`w-5 h-5 ${kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'}`} />
+                  <div key={kpi.label} className="bg-card rounded-xl border border-border p-4 sm:p-6">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <p className="text-foreground/60 text-xs sm:text-sm font-medium">{kpi.label}</p>
+                      <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'}`} />
                     </div>
-                    <p className="text-3xl font-bold text-foreground mb-2">{kpi.value}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">{kpi.value}</p>
                     <span
                       className={`text-xs font-semibold ${
                         kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'
@@ -121,8 +121,8 @@ export default function AdminAnalyticsPage() {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               {/* Appointment Trends */}
-              <div className="lg:col-span-2 bg-card rounded-xl border border-border p-6">
-                <h2 className="text-xl font-bold text-foreground mb-6">Appointment Trends (Last 6 Months)</h2>
+              <div className="lg:col-span-2 bg-card rounded-xl border border-border p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Appointment Trends (Last 6 Months)</h2>
                 <div className="space-y-6">
                   {chartData.map((d: any) => {
                     const maxAppts = Math.max(...chartData.map((c: any) => c.appointments), 1);
@@ -145,8 +145,8 @@ export default function AdminAnalyticsPage() {
               </div>
 
               {/* Appointment Status */}
-              <div className="bg-card rounded-xl border border-border p-6">
-                <h2 className="text-xl font-bold text-foreground mb-6">Appointment Status</h2>
+              <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Appointment Status</h2>
                 <div className="space-y-4">
                   {appointmentTrends.map((trend: any) => (
                     <div key={trend.status}>
@@ -167,16 +167,16 @@ export default function AdminAnalyticsPage() {
             {/* Tables Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Top Doctors */}
-              <div className="bg-card rounded-xl border border-border p-6 overflow-hidden flex flex-col">
-                <h2 className="text-xl font-bold text-foreground mb-6">Top Performing Doctors</h2>
+              <div className="bg-card rounded-xl border border-border p-4 sm:p-6 overflow-hidden flex flex-col">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Top Performing Doctors</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="text-left pb-3 text-foreground/60 font-semibold">Doctor</th>
-                        <th className="text-right pb-3 text-foreground/60 font-semibold">Appointments</th>
-                        <th className="text-right pb-3 text-foreground/60 font-semibold">Revenue</th>
-                        <th className="text-right pb-3 text-foreground/60 font-semibold">Rating</th>
+                        <th className="text-left pb-3 text-foreground/60 font-semibold whitespace-nowrap">Doctor</th>
+                        <th className="text-right pb-3 text-foreground/60 font-semibold whitespace-nowrap">Appointments</th>
+                        <th className="text-right pb-3 text-foreground/60 font-semibold whitespace-nowrap">Revenue</th>
+                        <th className="text-right pb-3 text-foreground/60 font-semibold whitespace-nowrap">Rating</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -185,7 +185,7 @@ export default function AdminAnalyticsPage() {
                       ) : (
                         topDoctors.map((doctor: any) => (
                           <tr key={doctor.id} className="border-b border-border hover:bg-muted/50 transition-colors last:border-0">
-                            <td className="py-4 text-foreground font-medium">{doctor.name}</td>
+                            <td className="py-4 text-foreground font-medium whitespace-nowrap">{doctor.name}</td>
                             <td className="text-right py-4 text-foreground/70">{doctor.appointments}</td>
                             <td className="text-right py-4 text-foreground font-semibold">₹{doctor.revenue.toLocaleString()}</td>
                             <td className="text-right py-4 text-yellow-500 font-semibold">★ {doctor.rating}</td>
@@ -198,8 +198,8 @@ export default function AdminAnalyticsPage() {
               </div>
 
               {/* Revenue Breakdown */}
-              <div className="bg-card rounded-xl border border-border p-6 flex flex-col">
-                <h2 className="text-xl font-bold text-foreground mb-6">Revenue Breakdown</h2>
+              <div className="bg-card rounded-xl border border-border p-4 sm:p-6 flex flex-col">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Revenue Breakdown</h2>
                 <div className="space-y-5">
                   {revenueData.map((item: any) => (
                     <div key={item.source}>

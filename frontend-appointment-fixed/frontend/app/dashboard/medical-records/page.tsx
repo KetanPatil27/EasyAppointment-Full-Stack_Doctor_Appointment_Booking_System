@@ -20,12 +20,12 @@ export default function MedicalRecordsPage() {
     <div className="min-h-screen bg-background flex">
       <DashboardSidebar />
 
-      <div className="flex-1 overflow-auto md:ml-64 pt-14 lg:pt-0">
-        <div className="p-6 md:p-8 max-w-4xl">
+      <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
+        <div className="p-4 sm:p-6 md:p-8 max-w-4xl">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Medical Records</h1>
-              <p className="text-foreground/60">Your health documents and test results</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Medical Records</h1>
+              <p className="text-foreground/60 text-sm">Your health documents and test results</p>
             </div>
           </div>
 

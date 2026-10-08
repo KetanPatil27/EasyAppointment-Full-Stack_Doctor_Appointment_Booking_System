@@ -133,28 +133,28 @@ export default function HealthInsightsPage() {
     <div className="min-h-screen bg-background flex">
       <DashboardSidebar />
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
-        <div className="p-6 md:p-8 max-w-4xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-1">Health Insights</h1>
-            <p className="text-foreground/60">Track your health metrics and appointment history</p>
+        <div className="p-4 sm:p-6 md:p-8 max-w-4xl">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Health Insights</h1>
+            <p className="text-foreground/60 text-sm">Track your health metrics and appointment history</p>
           </div>
 
           {/* Appointment Status Summary */}
           <section className="mb-8">
-            <h2 className="text-lg font-bold text-foreground mb-4">Appointment Summary</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <h2 className="text-base sm:text-lg font-bold text-foreground mb-4">Appointment Summary</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { label: 'Total',     value: stats.total,     color: 'bg-blue-100  text-blue-700',   icon: Calendar    },
                 { label: 'Completed', value: stats.completed, color: 'bg-green-100 text-green-700',  icon: CheckCircle },
                 { label: 'Upcoming',  value: stats.upcoming,  color: 'bg-yellow-100 text-yellow-700', icon: TrendingUp  },
                 { label: 'Cancelled', value: stats.cancelled, color: 'bg-red-100   text-red-700',    icon: Activity    },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="rounded-xl border border-border bg-card p-5">
-                  <div className={`inline-flex items-center justify-center h-10 w-10 rounded-lg ${color} mb-3`}>
-                    <Icon className="h-5 w-5" />
+                <div key={label} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+                  <div className={`inline-flex items-center justify-center h-9 w-9 sm:h-10 sm:w-10 rounded-lg ${color} mb-3`}>
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
-                  <p className="text-2xl font-bold text-foreground">{value}</p>
-                  <p className="text-sm text-foreground/60">{label} Appointments</p>
+                  <p className="text-xl sm:text-2xl font-bold text-foreground">{value}</p>
+                  <p className="text-xs sm:text-sm text-foreground/60">{label} Appointments</p>
                 </div>
               ))}
             </div>
@@ -245,7 +245,7 @@ export default function HealthInsightsPage() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-foreground/70 mb-1">Weight (kg)</label>
                   <input type="number" value={vitals.weight || ''}

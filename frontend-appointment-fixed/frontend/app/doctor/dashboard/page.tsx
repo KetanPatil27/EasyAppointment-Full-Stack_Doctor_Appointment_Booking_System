@@ -85,13 +85,13 @@ export default function DoctorDashboardPage() {
       <DoctorSidebar />
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
         <DoctorPendingGate>
-        <div className="p-6 md:p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-1">
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
               Welcome back, Dr. {currentUser.name}
             </h1>
             {doctorProfile && (
-              <p className="text-foreground/60">
+              <p className="text-sm sm:text-base text-foreground/60">
                 {doctorProfile.specialization} · {doctorProfile.experience} years experience
               </p>
             )}
@@ -99,7 +99,7 @@ export default function DoctorDashboardPage() {
 
           {!doctorProfile && !loading && (
             <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-              <p className="text-yellow-800 font-medium">Your doctor profile is incomplete.</p>
+              <p className="text-yellow-800 font-medium text-sm sm:text-base">Your doctor profile is incomplete.</p>
               <Link href="/doctor/profile" className="text-primary hover:underline text-sm mt-1 inline-block">
                 Complete your profile →
               </Link>
@@ -107,26 +107,26 @@ export default function DoctorDashboardPage() {
           )}
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {[
               { label: "Today's Appointments", value: todayCount,  icon: Calendar,    color: 'text-primary' },
               { label: 'Pending',              value: pending,    icon: Clock,        color: 'text-yellow-500' },
               { label: 'Confirmed',            value: confirmed,  icon: Users,        color: 'text-green-500' },
               { label: 'Completed',            value: completed,  icon: IndianRupee,  color: 'text-blue-500' },
             ].map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="rounded-xl border border-border bg-card p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Icon className={`h-6 w-6 ${color}`} />
-                  <span className="text-2xl font-bold text-foreground">{loading ? '…' : value}</span>
+              <div key={label} className="rounded-xl border border-border bg-card p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
+                  <span className="text-xl sm:text-2xl font-bold text-foreground">{loading ? '…' : value}</span>
                 </div>
-                <p className="text-sm font-medium text-foreground/70">{label}</p>
+                <p className="text-xs sm:text-sm font-medium text-foreground/70">{label}</p>
               </div>
             ))}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Appointments — with patient name */}
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
               <h2 className="text-lg font-bold text-foreground mb-4">Recent Appointments</h2>
               {loading ? (
                 <p className="text-foreground/60 text-sm">Loading…</p>
@@ -168,7 +168,7 @@ export default function DoctorDashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
               <h2 className="text-lg font-bold text-foreground mb-4">Quick Actions</h2>
               <div className="space-y-3">
                 {[

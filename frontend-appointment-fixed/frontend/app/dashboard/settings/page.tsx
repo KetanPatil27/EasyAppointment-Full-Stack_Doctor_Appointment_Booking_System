@@ -78,17 +78,17 @@ export default function SettingsPage() {
       <DashboardSidebar />
       <main className="flex-1 ml-0 pt-14 lg:ml-64 lg:pt-0">
         <div className="border-b border-border">
-          <div className="mx-auto max-w-3xl px-6 md:px-8 py-6">
-            <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-            <p className="text-foreground/60 mt-1">Manage your account security</p>
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Settings</h1>
+            <p className="text-sm sm:text-base text-foreground/60 mt-1">Manage your account security</p>
           </div>
         </div>
 
-        <div className="mx-auto max-w-3xl px-6 md:px-8 py-8 space-y-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
           {/* Change Password */}
-          <section className="rounded-2xl border border-border bg-card p-8">
-            <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <Lock className="h-6 w-6 text-primary" /> Change Password
+          <section className="rounded-2xl border border-border bg-card p-5 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
+              <Lock className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /> Change Password
             </h2>
 
             {pwdMsg && (
@@ -111,7 +111,7 @@ export default function SettingsPage() {
                       value={(pwdForm as any)[key]}
                       onChange={e => setPwdForm(prev => ({ ...prev, [key]: e.target.value }))}
                       required
-                      className="w-full px-4 py-2.5 pr-12 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2.5 pr-12 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
                     />
                     <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70">
                       {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -123,7 +123,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={changingPwd}
-                className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 {changingPwd ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
                 {changingPwd ? 'Updating...' : 'Update Password'}
@@ -132,11 +132,11 @@ export default function SettingsPage() {
           </section>
 
           {/* Delete Account */}
-          <section className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8">
-            <h2 className="text-xl font-bold text-foreground mb-2 flex items-center gap-2">
-              <Trash2 className="h-6 w-6 text-destructive" /> Delete Account
+          <section className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <Trash2 className="h-5 w-5 sm:h-6 sm:w-6 text-destructive" /> Delete Account
             </h2>
-            <p className="text-sm text-foreground/60 mb-6">
+            <p className="text-xs sm:text-sm text-foreground/60 mb-6">
               Permanently delete your account and all associated data. This action cannot be undone.
             </p>
 
@@ -147,26 +147,26 @@ export default function SettingsPage() {
             {!showDeleteConfirm ? (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-6 py-2.5 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 transition-colors"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 transition-colors"
               >
                 <Trash2 className="h-4 w-4" /> Delete My Account
               </button>
             ) : (
-              <div className="bg-card border border-destructive/30 rounded-xl p-6">
+              <div className="bg-card border border-destructive/30 rounded-xl p-4 sm:p-6">
                 <div className="flex items-start gap-3 mb-4">
-                  <AlertTriangle className="h-6 w-6 text-destructive shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-destructive shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-foreground">Are you absolutely sure?</p>
-                    <p className="text-sm text-foreground/60 mt-1">
+                    <p className="font-semibold text-foreground text-sm sm:text-base">Are you absolutely sure?</p>
+                    <p className="text-xs sm:text-sm text-foreground/60 mt-1">
                       This will permanently delete your account ({currentUser?.email}) and all your data including appointments and medical records.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={handleDeleteAccount}
                     disabled={deletingAccount}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 transition-colors disabled:opacity-50"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 transition-colors disabled:opacity-50 text-sm sm:text-base"
                   >
                     {deletingAccount ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                     {deletingAccount ? 'Deleting...' : 'Yes, Delete Permanently'}
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={deletingAccount}
-                    className="px-6 py-2.5 rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-lg border border-border text-foreground hover:bg-muted transition-colors text-center text-sm sm:text-base"
                   >
                     Cancel
                   </button>

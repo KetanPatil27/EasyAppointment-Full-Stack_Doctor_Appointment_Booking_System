@@ -273,7 +273,7 @@ export default function DoctorProfilePage() {
               </div>
             )}
 
-            <div className="flex items-center gap-5">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
               {/* Avatar preview */}
               <div className="relative shrink-0">
                 {imgPreview ? (

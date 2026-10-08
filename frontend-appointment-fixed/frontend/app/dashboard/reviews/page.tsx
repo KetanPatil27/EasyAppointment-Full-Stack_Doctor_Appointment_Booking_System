@@ -94,20 +94,20 @@ export default function PatientReviewsPage() {
     <div className="flex min-h-screen bg-background">
       <DashboardSidebar />
       <div className="flex-1 overflow-auto ml-0 pt-14 lg:ml-64 lg:pt-0">
-        <div className="p-6 md:p-8 max-w-3xl">
-          <h1 className="text-3xl font-bold text-foreground mb-1">Rate Your Doctors</h1>
-          <p className="text-foreground/60 mb-8">Share your experience to help other patients</p>
+        <div className="p-4 sm:p-6 md:p-8 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Rate Your Doctors</h1>
+          <p className="text-foreground/60 mb-6 sm:mb-8 text-sm">Share your experience to help other patients</p>
 
           {saved && (
-            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" /> Review submitted! Thank you.
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 flex items-center gap-2 text-sm">
+              <CheckCircle className="h-5 w-5 shrink-0" /> Review submitted! Thank you.
             </div>
           )}
 
           {/* Write review modal-style inline panel */}
           {selected && (
-            <div className="rounded-xl border-2 border-primary bg-card p-6 mb-6">
-              <h2 className="font-bold text-foreground mb-1">Write a Review</h2>
+            <div className="rounded-xl border-2 border-primary bg-card p-4 sm:p-6 mb-6">
+              <h2 className="font-bold text-foreground mb-1 text-base sm:text-lg">Write a Review</h2>
               <p className="text-sm text-foreground/60 mb-4">Dr. {selected.doctorName} · {selected.doctorSpec}</p>
               <div className="mb-4">
                 <p className="text-sm font-medium text-foreground mb-2">Your Rating</p>
@@ -120,13 +120,13 @@ export default function PatientReviewsPage() {
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none" />
               </div>
               {error && <p className="text-sm text-destructive mb-3">{error}</p>}
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button onClick={() => { setSelected(null); setRating(5); setText(''); setError('') }}
-                  className="flex-1 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
+                  className="w-full sm:flex-1 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
                   Cancel
                 </button>
                 <button onClick={handleSubmit} disabled={saving || rating < 1}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50">
+                  className="w-full sm:flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4" />}
                   {saving ? 'Submitting…' : 'Submit Review'}
                 </button>
@@ -151,14 +151,14 @@ export default function PatientReviewsPage() {
                   </h2>
                   <div className="space-y-3">
                     {reviewable.map(apt => (
-                      <div key={apt._id} className="rounded-xl border border-border bg-card p-5 flex items-center justify-between gap-4">
+                      <div key={apt._id} className="rounded-xl border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                         <div>
                           <p className="font-semibold text-foreground">Dr. {apt.doctorName}</p>
                           <p className="text-sm text-primary">{apt.doctorSpec}</p>
                           {apt.date && <p className="text-xs text-foreground/50 mt-1">{apt.date}</p>}
                         </div>
                         <button onClick={() => { setSelected(apt); setRating(5); setText('') }}
-                          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+                          className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                           <Star className="h-4 w-4" /> Rate
                         </button>
                       </div>
@@ -174,7 +174,7 @@ export default function PatientReviewsPage() {
                   </h2>
                   <div className="space-y-3">
                     {reviewed.map(apt => (
-                      <div key={apt._id} className="rounded-xl border border-border bg-card p-5 flex items-center justify-between gap-4 opacity-70">
+                      <div key={apt._id} className="rounded-xl border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 opacity-70">
                         <div>
                           <p className="font-semibold text-foreground">Dr. {apt.doctorName}</p>
                           <p className="text-sm text-primary">{apt.doctorSpec}</p>

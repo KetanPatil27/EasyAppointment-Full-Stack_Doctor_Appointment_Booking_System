@@ -98,14 +98,14 @@ function CheckoutContent() {
       <Header />
 
       <main className="flex-1 py-8 md:py-12">
-        <div className="mx-auto max-w-6xl px-4">
-          <h1 className="text-3xl font-bold text-foreground mb-8">Confirm & Pay</h1>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">Confirm & Pay</h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Order Summary */}
             <div className="lg:col-span-2">
-              <div className="rounded-xl border border-border bg-card p-6 md:p-8 mb-8">
-                <h2 className="text-xl font-bold text-foreground mb-6">Appointment Details</h2>
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6 md:p-8 mb-6 sm:mb-8">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Appointment Details</h2>
 
                 <div className="space-y-4 pb-6 border-b border-border mb-6">
                   <div className="flex items-center gap-4">
@@ -140,8 +140,8 @@ function CheckoutContent() {
               </div>
 
               {/* Payment Method */}
-              <div className="rounded-xl border border-border bg-card p-6 md:p-8">
-                <h2 className="text-xl font-bold text-foreground mb-6">Payment Method</h2>
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6 md:p-8">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">Payment Method</h2>
 
                 <div className="space-y-4 mb-6">
                   {(['card', 'upi', 'bank-transfer', 'wallet'] as const).map((method) => (
@@ -245,8 +245,8 @@ function CheckoutContent() {
 
             {/* Price Summary */}
             <div>
-              <div className="rounded-xl border border-border bg-card p-6 sticky top-6">
-                <h3 className="text-lg font-bold text-foreground mb-6">Order Summary</h3>
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-6 lg:sticky lg:top-6">
+                <h3 className="text-lg font-bold text-foreground mb-4 sm:mb-6">Order Summary</h3>
 
                 <div className="space-y-4 pb-4 border-b border-border mb-4">
                   <div className="flex justify-between text-foreground/70">
